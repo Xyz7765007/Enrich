@@ -48,16 +48,20 @@ function detectMkt(p,o){const l=[p.country,p.city,p.state,o?.country,o?.city].fi
   if(/australia|new zealand|singapore|malaysia|indonesia|vietnam|thailand|philippines/.test(l))return"ANZ/SEA";
   if(/united states|canada|united kingdom|london|germany|france/.test(l))return"US/UK/EU";return"Other"}
 
+// ━━━ LINKEDIN HELPERS ━━━
+function liSlug(url){if(!url)return"";const m=url.match(/linkedin\.com\/in\/([^\/\?#]+)/i);return m?m[1]:""}
+function liClean(url){if(!url)return"";if(url.startsWith("http"))return url;return"https://www.linkedin.com/in/"+url}
+
 // ━━━ CSV EXPORT ━━━
 function exportCSV(leads){
   const ch={"India":"Email + LinkedIn simultaneous","Gulf":"LinkedIn FIRST then email 2-3 days later","ANZ/SEA":"Email + LinkedIn + Loom mandatory","US/UK/EU":"Email + LinkedIn + Loom","Other":"Email + LinkedIn"};
   const mkts={};leads.forEach(l=>{const m=l._market||"Other";if(!mkts[m])mkts[m]=[];mkts[m].push(l)});
   const esc=v=>`"${String(v||"").replace(/"/g,'""')}"`;
-  let csv="First Name,Last Name,Title,Company Name,Email,Email Status,LinkedIn,Market,Outreach Channel,Score,Grade\n";
+  let csv="First Name,Last Name,Title,Company Name,Email,Email Status,LinkedIn URL,LinkedIn Slug,City,Country,Company Domain,Employees,Market,Outreach Channel,Score,Grade\n";
   ["India","Gulf","ANZ/SEA","US/UK/EU","Other"].forEach(m=>{const ml=mkts[m];if(!ml?.length)return;
     ml.sort((a,b)=>(b._scoreData?.score||0)-(a._scoreData?.score||0));
-    csv+=`\n--- ${m.toUpperCase()} (${ml.length} leads) ---,,,,,,,,${ch[m]||""},,\n\n`;
-    ml.forEach(l=>{csv+=[esc(l.first_name),esc(l.last_name),esc(l.title),esc(l._companyName),esc(l.email),esc(l.email_status),esc(l.linkedin_url),esc(l._market),esc(ch[l._market]||""),l._scoreData?.score||0,esc(l._scoreData?.grade||"D")].join(",")+"\n"})});
+    csv+=`\n--- ${m.toUpperCase()} (${ml.length} leads) ---,,,,,,,,,,,,,${ch[m]||""},,\n\n`;
+    ml.forEach(l=>{const o=l.organization||{};csv+=[esc(l.first_name),esc(l.last_name),esc(l.title),esc(l._companyName),esc(l.email),esc(l.email_status),esc(liClean(l.linkedin_url)),esc(liSlug(l.linkedin_url)),esc(l.city),esc(l.country),esc(o.primary_domain||o.website_url||""),esc(o.estimated_num_employees||""),esc(l._market),esc(ch[l._market]||""),l._scoreData?.score||0,esc(l._scoreData?.grade||"D")].join(",")+"\n"})});
   const b=new Blob([csv],{type:"text/csv"});const u=URL.createObjectURL(b);const a=document.createElement("a");
   a.href=u;a.download=`Voxelised-Leads-${new Date().toISOString().split("T")[0]}.csv`;a.click();URL.revokeObjectURL(u)}
 
@@ -87,14 +91,15 @@ function SC({label,value,color}){return(<div style={{padding:"0.8rem 1.2rem",bac
 function GB({grade,score}){const c={A:"#00ff88",B:"#88ff00",C:"#ffaa00",D:"#ff4444"}[grade]||"#666";return(<span style={{display:"inline-flex",alignItems:"center",gap:5}}><span style={{width:22,height:22,borderRadius:"50%",background:c+"18",color:c,display:"inline-flex",alignItems:"center",justifyContent:"center",fontSize:"0.7rem",fontWeight:700}}>{grade}</span><span style={{color:"var(--fg3)",fontSize:"0.75rem",fontFamily:"var(--mono)"}}>{score}</span></span>)}
 function LT({leads}){const sorted=[...leads].sort((a,b)=>(b._scoreData?.score||0)-(a._scoreData?.score||0));
   return(<div style={{overflowX:"auto"}}><table style={{width:"100%",borderCollapse:"collapse"}}><thead><tr style={{borderBottom:"1px solid var(--bg3)"}}>
-    {["#","Score","Name","Title","Company","Email","Mkt"].map(h=><th key={h} style={{padding:"0.6rem 0.7rem",textAlign:"left",fontSize:"0.6rem",letterSpacing:"0.12em",textTransform:"uppercase",color:"var(--fg4)",fontWeight:500,whiteSpace:"nowrap"}}>{h}</th>)}
+    {["#","Score","Name","Title","Company","Email","LinkedIn","Mkt"].map(h=><th key={h} style={{padding:"0.6rem 0.7rem",textAlign:"left",fontSize:"0.6rem",letterSpacing:"0.12em",textTransform:"uppercase",color:"var(--fg4)",fontWeight:500,whiteSpace:"nowrap"}}>{h}</th>)}
   </tr></thead><tbody>{sorted.map((l,i)=><tr key={l.id||i} style={{borderBottom:"1px solid var(--bg1)"}} title={l._scoreData?.reasons?.join(" | ")}>
     <td style={{padding:"0.55rem 0.7rem",color:"var(--fg4)",fontSize:"0.75rem",fontFamily:"var(--mono)"}}>{i+1}</td>
     <td style={{padding:"0.55rem 0.7rem"}}>{l._scoreData?<GB grade={l._scoreData.grade} score={l._scoreData.score}/>:"—"}</td>
-    <td style={{padding:"0.55rem 0.7rem",fontWeight:600,whiteSpace:"nowrap"}}>{l.first_name} {l.last_name}{l.linkedin_url&&<a href={l.linkedin_url} target="_blank" rel="noopener noreferrer" style={{marginLeft:5,color:"#0a66c2",fontSize:"0.65rem",textDecoration:"none",opacity:.7}}>↗</a>}</td>
+    <td style={{padding:"0.55rem 0.7rem",fontWeight:600,whiteSpace:"nowrap"}}>{l.first_name} {l.last_name}</td>
     <td style={{padding:"0.55rem 0.7rem",color:"var(--fg2)",maxWidth:180,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",fontSize:"0.82rem"}}>{l.title}</td>
     <td style={{padding:"0.55rem 0.7rem",color:"var(--fg3)",fontSize:"0.82rem",whiteSpace:"nowrap"}}>{l._companyName||""}</td>
     <td style={{padding:"0.55rem 0.7rem",fontFamily:"var(--mono)",fontSize:"0.72rem"}}>{l.email?<span style={{color:l.email_status==="verified"?"var(--ac)":"var(--warn)"}}>{l.email}</span>:<span style={{color:"var(--fg4)"}}>—</span>}</td>
+    <td style={{padding:"0.55rem 0.7rem",fontSize:"0.72rem"}}>{l.linkedin_url?<a href={liClean(l.linkedin_url)} target="_blank" rel="noopener noreferrer" style={{color:"#5BA0D6",textDecoration:"none",fontFamily:"var(--mono)",display:"inline-flex",alignItems:"center",gap:4}}><span style={{opacity:.5,fontSize:".6rem"}}>in/</span>{liSlug(l.linkedin_url)||"profile"}</a>:<span style={{color:"var(--fg4)"}}>—</span>}</td>
     <td style={{padding:"0.55rem 0.7rem"}}><span style={{padding:"1px 7px",background:"var(--bg2)",borderRadius:3,fontSize:"0.65rem",color:"var(--fg3)",whiteSpace:"nowrap"}}>{l._market||"—"}</span></td>
   </tr>)}</tbody></table></div>)}
 

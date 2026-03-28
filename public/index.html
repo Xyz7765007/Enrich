@@ -10,578 +10,135 @@
   <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
   <style>
-    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-    :root {
-      --bg: #000; --bg-1: #0a0a0a; --bg-2: #111; --bg-3: #1a1a1a;
-      --fg: #fff; --fg-1: #ccc; --fg-2: #888; --fg-3: #555; --fg-4: #333;
-      --accent: #00ff88; --accent-dim: #003311; --warn: #ffaa00; --err: #ff4444;
-      --font: 'Bricolage Grotesque', system-ui, sans-serif;
-      --mono: 'JetBrains Mono', monospace;
-    }
-    html { font-size: 14px; }
-    body { background: var(--bg); color: var(--fg); font-family: var(--font); min-height: 100vh; overflow-x: hidden; }
-    input, textarea, select, button { font-family: inherit; }
-    ::selection { background: var(--accent); color: var(--bg); }
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: var(--bg); }
-    ::-webkit-scrollbar-thumb { background: var(--bg-3); border-radius: 3px; }
-
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
-    @keyframes slideIn { from { opacity: 0; transform: translateX(-12px); } to { opacity: 1; transform: translateX(0); } }
-    .fade-in { animation: fadeIn 0.4s ease-out both; }
-    .pulse { animation: pulse 1.5s ease-in-out infinite; }
-
-    .label {
-      font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase;
-      color: var(--fg-3); font-weight: 500; display: block; margin-bottom: 0.35rem;
-    }
-    .input {
-      width: 100%; padding: 0.65rem 0.8rem; background: var(--bg-1); border: 1px solid var(--bg-3);
-      border-radius: 5px; color: var(--fg-1); font-size: 0.85rem; outline: none; transition: border-color 0.2s;
-    }
-    .input:focus { border-color: var(--fg-3); }
-    .input::placeholder { color: var(--fg-4); }
-    textarea.input { resize: vertical; font-family: var(--mono); font-size: 0.78rem; }
-
-    .btn {
-      padding: 0.7rem 1.2rem; border: none; border-radius: 5px; font-size: 0.8rem;
-      font-weight: 600; letter-spacing: 0.08em; cursor: pointer; transition: all 0.15s;
-    }
-    .btn:disabled { opacity: 0.35; cursor: default; }
-    .btn-primary { background: var(--fg); color: var(--bg); }
-    .btn-primary:hover:not(:disabled) { background: #e0e0e0; }
-    .btn-accent { background: var(--accent); color: var(--bg); }
-    .btn-accent:hover:not(:disabled) { background: #00dd77; }
-    .btn-ghost { background: var(--bg-1); color: var(--accent); border: 1px solid var(--accent-dim); }
-    .btn-ghost:hover:not(:disabled) { background: var(--accent-dim); }
-    .btn-danger { background: #1a0000; color: var(--err); border: 1px solid #330000; }
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    :root{--bg:#000;--bg-1:#0a0a0a;--bg-2:#111;--bg-3:#1a1a1a;--fg:#fff;--fg-1:#ccc;--fg-2:#888;--fg-3:#555;--fg-4:#333;--accent:#00ff88;--accent-dim:#003311;--warn:#ffaa00;--err:#ff4444;--font:'Bricolage Grotesque',system-ui,sans-serif;--mono:'JetBrains Mono',monospace}
+    html{font-size:14px}body{background:var(--bg);color:var(--fg);font-family:var(--font);min-height:100vh;overflow-x:hidden}
+    input,textarea,select,button{font-family:inherit}::selection{background:var(--accent);color:var(--bg)}
+    ::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--bg-3);border-radius:3px}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}.pulse{animation:pulse 1.5s ease-in-out infinite}
+    .label{font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;color:var(--fg-3);font-weight:500;display:block;margin-bottom:.35rem}
+    .input{width:100%;padding:.65rem .8rem;background:var(--bg-1);border:1px solid var(--bg-3);border-radius:5px;color:var(--fg-1);font-size:.85rem;outline:none;transition:border-color .2s}
+    .input:focus{border-color:var(--fg-3)}.input::placeholder{color:var(--fg-4)}textarea.input{resize:vertical;font-family:var(--mono);font-size:.78rem}
+    .btn{padding:.7rem 1.2rem;border:none;border-radius:5px;font-size:.8rem;font-weight:600;letter-spacing:.08em;cursor:pointer;transition:all .15s}
+    .btn:disabled{opacity:.35;cursor:default}.btn-primary{background:var(--fg);color:var(--bg)}.btn-accent{background:var(--accent);color:var(--bg)}
+    .btn-ghost{background:var(--bg-1);color:var(--accent);border:1px solid var(--accent-dim)}.btn-danger{background:#1a0000;color:var(--err);border:1px solid #330000}
+    .tab{padding:8px 16px;background:none;border:none;color:var(--fg-4);font-size:.78rem;font-weight:600;cursor:pointer;border-bottom:2px solid transparent;letter-spacing:.08em;transition:all .15s}
+    .tab.active{color:var(--fg);border-bottom-color:var(--accent)}.tab:hover{color:var(--fg-2)}
+    .drop-zone{border:2px dashed var(--bg-3);border-radius:8px;padding:40px 24px;text-align:center;cursor:pointer;transition:all .2s}
+    .drop-zone:hover,.drop-zone.dragover{border-color:var(--accent);background:rgba(0,255,136,.03)}
   </style>
 </head>
 <body>
-  <div id="root"></div>
-  <script type="text/babel">
-    const { useState, useRef, useCallback, useEffect } = React;
+<div id="root"></div>
+<script type="text/babel">
+const{useState,useRef,useCallback}=React;
+function scoreLead(p,o){let s=0;const r=[];const es=p.email_status;if(es==="verified"){s+=30;r.push("Verified +30")}else if(es==="likely to engage"){s+=20;r.push("Likely +20")}else if(p.email){s+=10;r.push("Has email +10")}const sn=p.seniority||"";const sm={founder:25,owner:25,c_suite:22,vp:18,director:14,manager:8,senior:4};if(sm[sn]){s+=sm[sn];r.push(sn+" +"+sm[sn])}const e=o?.estimated_num_employees||0;if(e>=50&&e<=500)s+=15;else if(e>500&&e<=2000)s+=12;else if(e>2000)s+=8;else if(e>=20)s+=10;else s+=3;const rv=o?.organization_revenue||0;if(rv>=1e6&&rv<=1e8)s+=15;else if(rv>1e8)s+=10;else if(rv>0)s+=5;const g=o?.organization_headcount_twelve_month_growth||0;if(g>.2)s+=10;else if(g>.05)s+=6;else if(g>0)s+=3;if(p.linkedin_url)s+=5;const sc=Math.min(s,100);return{score:sc,reasons:r,grade:sc>=80?"A":sc>=60?"B":sc>=40?"C":"D"}}
+function detectMarket(p,o){const l=[p.country,p.city,p.state,o?.country,o?.city].filter(Boolean).join(" ").toLowerCase();if(/india|mumbai|bengaluru|bangalore|hyderabad|chennai|pune|delhi|noida|gurugram/.test(l))return"India";if(/saudi|uae|emirates|dubai|abu dhabi|riyadh|qatar|bahrain|kuwait|oman|egypt|jordan/.test(l))return"Gulf";if(/australia|new zealand|singapore|malaysia|indonesia|vietnam|thailand|philippines/.test(l))return"ANZ/SEA";if(/united states|canada|united kingdom|uk|london|germany|france/.test(l))return"US/UK/EU";return"Other"}
+function exportCSV(leads){const ch={"India":"Email + LinkedIn simultaneous","Gulf":"LinkedIn FIRST then email 2-3 days later","ANZ/SEA":"Email + LinkedIn + Loom mandatory","US/UK/EU":"Email + LinkedIn + Loom","Other":"Email + LinkedIn"};const mkts={};leads.forEach(l=>{const m=l._market||"Other";if(!mkts[m])mkts[m]=[];mkts[m].push(l)});const esc=v=>`"${String(v||"").replace(/"/g,'""')}"`;let csv="First Name,Last Name,Title,Company Name,Email,Email Status,LinkedIn,Market,Outreach Channel,Score,Grade\n";["India","Gulf","ANZ/SEA","US/UK/EU","Other"].forEach(m=>{const ml=mkts[m];if(!ml?.length)return;ml.sort((a,b)=>(b._scoreData?.score||0)-(a._scoreData?.score||0));csv+=`\n--- ${m.toUpperCase()} (${ml.length} leads) ---,,,,,,,,${ch[m]||""},,\n\n`;ml.forEach(l=>{csv+=[esc(l.first_name),esc(l.last_name),esc(l.title),esc(l._companyName),esc(l.email),esc(l.email_status),esc(l.linkedin_url),esc(l._market),esc(ch[l._market]||""),l._scoreData?.score||0,esc(l._scoreData?.grade||"D")].join(",")+"\n"})});const blob=new Blob([csv],{type:"text/csv"});const u=URL.createObjectURL(blob);const a=document.createElement("a");a.href=u;a.download=`Voxelised-Leads-${new Date().toISOString().split("T")[0]}.csv`;a.click();URL.revokeObjectURL(u)}
+function parseCSV(text){const lines=text.split("\n").map(l=>l.trim()).filter(Boolean);if(lines.length<2)return[];function pl(line){const r=[];let c="";let q=false;for(let i=0;i<line.length;i++){const ch=line[i];if(ch==='"')q=!q;else if(ch===","&&!q){r.push(c.trim());c=""}else c+=ch}r.push(c.trim());return r}const hdrs=pl(lines[0]).map(h=>h.toLowerCase().replace(/[^a-z0-9_\s]/g,"").trim());const rows=[];for(let i=1;i<lines.length;i++){const line=lines[i];if(line.startsWith("---")||line.startsWith('"---'))continue;const vals=pl(line);if(vals.every(v=>!v))continue;const obj={};hdrs.forEach((h,idx)=>{obj[h]=vals[idx]||""});rows.push(obj)}return rows}
+const API=window.location.origin;
+async function apiSearch(k,body){const r=await fetch(`${API}/api/search`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({apiKey:k,...body})});if(!r.ok)throw new Error(await r.text());return r.json()}
+async function apiEnrich(k,details){const r=await fetch(`${API}/api/enrich`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({apiKey:k,details})});if(!r.ok)throw new Error(await r.text());return r.json()}
 
-    // ━━━ SCORING ALGORITHM ━━━
-    function scoreLead(person, org) {
-      let score = 0;
-      const reasons = [];
+function FF({label,value,onChange,placeholder,multiline}){return(<div style={{marginBottom:"0.9rem"}}><label className="label">{label}</label>{multiline?<textarea className="input" value={value} onChange={e=>onChange(e.target.value)} placeholder={placeholder} rows={3}/>:<input className="input" value={value} onChange={e=>onChange(e.target.value)} placeholder={placeholder}/>}</div>)}
+function SC({label,value,color}){return(<div style={{padding:"0.8rem 1.2rem",background:"var(--bg-1)",borderRadius:8,border:"1px solid var(--bg-3)",minWidth:75,flex:"1 1 75px"}}><div style={{fontSize:"1.5rem",fontWeight:800,color,lineHeight:1}}>{value}</div><div style={{fontSize:"0.6rem",letterSpacing:"0.15em",textTransform:"uppercase",color:"var(--fg-4)",marginTop:4}}>{label}</div></div>)}
+function GB({grade,score}){const c={A:"#00ff88",B:"#88ff00",C:"#ffaa00",D:"#ff4444"}[grade]||"#666";return(<span style={{display:"inline-flex",alignItems:"center",gap:5}}><span style={{width:22,height:22,borderRadius:"50%",background:c+"18",color:c,display:"inline-flex",alignItems:"center",justifyContent:"center",fontSize:"0.7rem",fontWeight:700}}>{grade}</span><span style={{color:"var(--fg-3)",fontSize:"0.75rem",fontFamily:"var(--mono)"}}>{score}</span></span>)}
+function LT({leads}){const sorted=[...leads].sort((a,b)=>(b._scoreData?.score||0)-(a._scoreData?.score||0));return(<div style={{overflowX:"auto"}}><table style={{width:"100%",borderCollapse:"collapse"}}><thead><tr style={{borderBottom:"1px solid var(--bg-3)"}}>{["#","Score","Name","Title","Company","Email","Mkt"].map(h=><th key={h} style={{padding:"0.6rem 0.7rem",textAlign:"left",fontSize:"0.6rem",letterSpacing:"0.12em",textTransform:"uppercase",color:"var(--fg-4)",fontWeight:500,whiteSpace:"nowrap"}}>{h}</th>)}</tr></thead><tbody>{sorted.map((l,i)=><tr key={l.id||i} style={{borderBottom:"1px solid var(--bg-1)"}} title={l._scoreData?.reasons?.join(" | ")}><td style={{padding:"0.55rem 0.7rem",color:"var(--fg-4)",fontSize:"0.75rem",fontFamily:"var(--mono)"}}>{i+1}</td><td style={{padding:"0.55rem 0.7rem"}}>{l._scoreData?<GB grade={l._scoreData.grade} score={l._scoreData.score}/>:"—"}</td><td style={{padding:"0.55rem 0.7rem",fontWeight:600,whiteSpace:"nowrap"}}>{l.first_name} {l.last_name}{l.linkedin_url&&<a href={l.linkedin_url} target="_blank" rel="noopener noreferrer" style={{marginLeft:5,color:"#0a66c2",fontSize:"0.65rem",textDecoration:"none",opacity:.7}}>↗</a>}</td><td style={{padding:"0.55rem 0.7rem",color:"var(--fg-2)",maxWidth:180,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",fontSize:"0.82rem"}}>{l.title}</td><td style={{padding:"0.55rem 0.7rem",color:"var(--fg-3)",fontSize:"0.82rem",whiteSpace:"nowrap"}}>{l._companyName||""}</td><td style={{padding:"0.55rem 0.7rem",fontFamily:"var(--mono)",fontSize:"0.72rem"}}>{l.email?<span style={{color:l.email_status==="verified"?"var(--accent)":"var(--warn)"}}>{l.email}</span>:<span style={{color:"var(--fg-4)"}}>—</span>}</td><td style={{padding:"0.55rem 0.7rem"}}><span style={{padding:"1px 7px",background:"var(--bg-2)",borderRadius:3,fontSize:"0.65rem",color:"var(--fg-3)",whiteSpace:"nowrap"}}>{l._market||"—"}</span></td></tr>)}</tbody></table></div>)}
 
-      // Email quality (0-30)
-      const es = person.email_status;
-      if (es === "verified") { score += 30; reasons.push("Verified email +30"); }
-      else if (es === "likely to engage") { score += 20; reasons.push("Likely engage +20"); }
-      else if (person.email) { score += 10; reasons.push("Has email +10"); }
+function App(){
+  const[apiKey,setApiKey]=useState("");const[keySet,setKeySet]=useState(false);const[mode,setMode]=useState("search");
+  const[filters,setFilters]=useState({titles:"CEO, CTO, Co-Founder, VP Marketing, VP Sales, COO, Founder",seniorities:"founder, c_suite, vp, director",locations:"",orgLocations:"",domains:"",empMin:"50",empMax:"2000",technologies:"",keywords:"",emailStatus:"verified, likely to engage",pages:"3",marketLabel:"India"});
+  const[searchResults,setSearchResults]=useState([]);const[enrichedLeads,setEnrichedLeads]=useState([]);
+  const[csvRows,setCsvRows]=useState([]);const[csvFilename,setCsvFilename]=useState("");const[uploadEnriched,setUploadEnriched]=useState([]);
+  const[status,setStatus]=useState("");const[phase,setPhase]=useState("idle");const[progress,setProgress]=useState({current:0,total:0});const[creditsUsed,setCreditsUsed]=useState(0);
+  const abortRef=useRef(false);const fileRef=useRef(null);
+  const setF=(k,v)=>setFilters(p=>({...p,[k]:v}));const pl=s=>s.split(",").map(x=>x.trim()).filter(Boolean);
 
-      // Seniority (0-25)
-      const sen = person.seniority || "";
-      const senMap = { founder: 25, owner: 25, c_suite: 22, vp: 18, director: 14, manager: 8, senior: 4 };
-      if (senMap[sen]) { score += senMap[sen]; reasons.push(`${sen} +${senMap[sen]}`); }
+  const handleSearch=async()=>{if(!apiKey)return;abortRef.current=false;setPhase("searching");setSearchResults([]);setEnrichedLeads([]);const tp=parseInt(filters.pages)||3;let all=[];
+    try{for(let p=1;p<=tp;p++){if(abortRef.current)break;setStatus(`Searching page ${p}/${tp}...`);const body={page:p,per_page:100};const t=pl(filters.titles);if(t.length)body.person_titles=t;const s=pl(filters.seniorities);if(s.length)body.person_seniorities=s;const plc=pl(filters.locations);if(plc.length)body.person_locations=plc;const ol=pl(filters.orgLocations);if(ol.length)body.organization_locations=ol;const d=pl(filters.domains);if(d.length)body.q_organization_domains_list=d;if(filters.empMin||filters.empMax)body.organization_num_employees_ranges=[`${filters.empMin||"1"},${filters.empMax||"10000"}`];const te=pl(filters.technologies);if(te.length)body.currently_using_any_of_technology_uids=te;if(filters.keywords)body.q_keywords=filters.keywords;const es=pl(filters.emailStatus);if(es.length)body.contact_email_status=es;const data=await apiSearch(apiKey,body);const people=data.people||[];if(!people.length)break;all=[...all,...people];setSearchResults([...all]);if(p<tp)await new Promise(r=>setTimeout(r,1200))}setStatus(`Found ${all.length} leads. Hit ENRICH.`);setPhase("idle")}catch(e){setStatus("Search error: "+e.message);setPhase("idle")}};
 
-      // Company size (0-15)
-      const emp = org?.estimated_num_employees || 0;
-      if (emp >= 50 && emp <= 500) { score += 15; reasons.push(`${emp} emp ★ +15`); }
-      else if (emp > 500 && emp <= 2000) { score += 12; reasons.push(`${emp} emp +12`); }
-      else if (emp > 2000) { score += 8; reasons.push(`${emp} emp +8`); }
-      else if (emp >= 20) { score += 10; reasons.push(`${emp} emp +10`); }
-      else { score += 3; }
+  const doEnrich=async(items,setResults,marketOverride)=>{abortRef.current=false;setPhase("enriching");setResults([]);const batches=[];for(let i=0;i<items.length;i+=10)batches.push(items.slice(i,i+10));setProgress({current:0,total:items.length});let all=[];let cr=0;
+    for(let i=0;i<batches.length;i++){if(abortRef.current){setStatus(`Stopped. ${all.length} enriched.`);break}setStatus(`Enriching batch ${i+1}/${batches.length} — ${cr} credits`);
+      try{const data=await apiEnrich(apiKey,batches[i]);cr+=data.credits_consumed||batches[i].length;setCreditsUsed(c=>c+(data.credits_consumed||batches[i].length));
+        (data.matches||[]).forEach((m,mi)=>{if(!m)return;const o=m.organization||{};const orig=batches[i][mi]||{};m._market=orig._origMarket||marketOverride||detectMarket(m,o);m._companyName=o.name||m.employment_history?.[0]?.organization_name||orig.organization_name||"";m._scoreData=scoreLead(m,o)});
+        all=[...all,...(data.matches||[]).filter(Boolean)];setResults([...all]);setProgress({current:all.length,total:items.length})}
+      catch(e){setStatus(`Batch ${i+1} error: ${e.message}. Retrying...`);await new Promise(r=>setTimeout(r,3000));i--;continue}
+      if(i<batches.length-1)await new Promise(r=>setTimeout(r,1500))}
+    setStatus(`Done! ${all.length} enriched. ${cr} credits.`);setPhase("done")};
 
-      // Revenue (0-15)
-      const rev = org?.organization_revenue || 0;
-      if (rev >= 1e6 && rev <= 1e8) { score += 15; reasons.push("Rev $1-100M +15"); }
-      else if (rev > 1e8) { score += 10; reasons.push("Rev >$100M +10"); }
-      else if (rev > 0) { score += 5; reasons.push("Some rev +5"); }
+  const handleEnrichSearch=()=>{if(!searchResults.length)return;const ids=searchResults.map(p=>({id:p.id})).filter(d=>d.id);doEnrich(ids,setEnrichedLeads,filters.marketLabel)};
 
-      // Growth (0-10)
-      const g = org?.organization_headcount_twelve_month_growth || 0;
-      if (g > 0.2) { score += 10; reasons.push(`${(g*100).toFixed(0)}% growth +10`); }
-      else if (g > 0.05) { score += 6; reasons.push("Moderate growth +6"); }
-      else if (g > 0) { score += 3; }
+  const handleFileUpload=(file)=>{if(!file)return;setCsvFilename(file.name);const reader=new FileReader();reader.onload=(e)=>{const rows=parseCSV(e.target.result);setCsvRows(rows);setUploadEnriched([]);setStatus(`Loaded ${rows.length} leads from ${file.name}.`)};reader.readAsText(file)};
+  const handleDrop=useCallback((e)=>{e.preventDefault();e.stopPropagation();e.currentTarget.classList.remove("dragover");const f=e.dataTransfer?.files?.[0];if(f&&f.name.endsWith(".csv"))handleFileUpload(f)},[]);
 
-      // LinkedIn (0-5)
-      if (person.linkedin_url) { score += 5; reasons.push("LinkedIn +5"); }
+  const handleEnrichCSV=()=>{if(!csvRows.length||!apiKey)return;
+    const details=csvRows.map((row,idx)=>{const d={};
+      const fn=row["first name"]||row["firstname"]||row["first_name"]||row["name"]||"";if(fn)d.first_name=fn;
+      const ln=row["last name"]||row["lastname"]||row["last_name"]||"";if(ln)d.last_name=ln;
+      const dom=row["domain"]||row["domain search in apollo"]||row["website"]||row["company domain"]||"";if(dom)d.domain=dom.replace(/^https?:\/\//,"").replace(/\/.*/,"");
+      const org=row["company name"]||row["company"]||row["organization"]||"";if(org)d.organization_name=org;
+      const em=row["email"]||"";if(em&&em.includes("@"))d.email=em;
+      const li=row["linkedin"]||row["linkedin url"]||row["linkedin_url"]||"";if(li&&li.includes("linkedin"))d.linkedin_url=li;
+      const aid=row["apollo id"]||row["apollo_id"]||"";if(aid&&aid.length>10&&/^[a-f0-9]+$/.test(aid))d.id=aid;
+      d._origMarket=row["market"]||"";return d}).filter(d=>d.first_name||d.domain||d.email||d.id||d.linkedin_url);
+    doEnrich(details,setUploadEnriched,"")};
 
-      const s = Math.min(score, 100);
-      return { score: s, reasons, grade: s >= 80 ? "A" : s >= 60 ? "B" : s >= 40 ? "C" : "D" };
-    }
+  const activeLeads=mode==="upload"?uploadEnriched:(enrichedLeads.length?enrichedLeads:searchResults);
+  const stats=activeLeads.length&&activeLeads[0]?._scoreData?{total:activeLeads.length,em:activeLeads.filter(l=>l.email).length,ver:activeLeads.filter(l=>l.email_status==="verified").length,avg:Math.round(activeLeads.reduce((s,l)=>s+(l._scoreData?.score||0),0)/activeLeads.length),a:activeLeads.filter(l=>l._scoreData?.grade==="A").length,b:activeLeads.filter(l=>l._scoreData?.grade==="B").length}:null;
 
-    // ━━━ MARKET DETECTION ━━━
-    function detectMarket(person, org) {
-      const loc = [person.country, person.city, person.state, org?.country, org?.city]
-        .filter(Boolean).join(" ").toLowerCase();
-      if (/india|mumbai|bengaluru|bangalore|hyderabad|chennai|pune|delhi|noida|gurugram|kolkata/.test(loc)) return "India";
-      if (/saudi|uae|emirates|dubai|abu dhabi|riyadh|qatar|bahrain|kuwait|oman|egypt|jordan|lebanon/.test(loc)) return "Gulf";
-      if (/australia|new zealand|singapore|malaysia|indonesia|vietnam|thailand|philippines|hong kong/.test(loc)) return "ANZ/SEA";
-      if (/united states|canada|united kingdom|uk|london|germany|france|netherlands/.test(loc)) return "US/UK/EU";
-      return "Other";
-    }
+  if(!keySet)return(<div style={{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",padding:24}}><div style={{maxWidth:440,width:"100%"}}><div style={{marginBottom:48}}><div style={{fontSize:"0.7rem",letterSpacing:"0.3em",textTransform:"uppercase",color:"var(--fg-4)",marginBottom:6}}>Voxelised</div><h1 style={{fontSize:"2.4rem",fontWeight:800,lineHeight:1,margin:"0 0 12px 0"}}>Lead Engine</h1><p style={{color:"var(--fg-3)",fontSize:"0.9rem",lineHeight:1.5}}>Search + Enrich from Apollo, or upload a CSV to enrich existing leads. Score, grade, and export.</p></div><div style={{marginBottom:20}}><label className="label">Apollo API Key</label><input type="password" value={apiKey} onChange={e=>setApiKey(e.target.value)} className="input" placeholder="Paste your Apollo.io API key" onKeyDown={e=>e.key==="Enter"&&apiKey&&setKeySet(true)} style={{padding:"0.9rem 1rem",fontSize:"0.9rem"}}/></div><button className="btn btn-primary" style={{width:"100%",padding:"0.85rem"}} onClick={()=>apiKey&&setKeySet(true)} disabled={!apiKey}>CONNECT →</button><p style={{color:"var(--fg-4)",fontSize:"0.7rem",marginTop:14,textAlign:"center"}}>Key stays in browser. Only sent to your Vercel proxy → Apollo API.</p></div></div>);
 
-    // ━━━ CSV EXPORT ━━━
-    function exportCSV(leads) {
-      const channelMap = {
-        "India": "Email + LinkedIn simultaneous",
-        "Gulf": "LinkedIn FIRST then email 2-3 days later",
-        "ANZ/SEA": "Email + LinkedIn + Loom mandatory",
-        "US/UK/EU": "Email + LinkedIn + Loom",
-        "Other": "Email + LinkedIn",
-      };
-
-      const markets = {};
-      leads.forEach(l => {
-        const m = l._market || "Other";
-        if (!markets[m]) markets[m] = [];
-        markets[m].push(l);
-      });
-
-      const esc = v => `"${String(v || "").replace(/"/g, '""')}"`;
-      let csv = "First Name,Last Name,Title,Company Name,Email,Email Status,LinkedIn,Market,Outreach Channel,Score,Grade\n";
-
-      const order = ["India", "Gulf", "ANZ/SEA", "US/UK/EU", "Other"];
-      order.forEach(market => {
-        const ml = markets[market];
-        if (!ml?.length) return;
-        ml.sort((a, b) => (b._scoreData?.score || 0) - (a._scoreData?.score || 0));
-        csv += `\n--- ${market.toUpperCase()} (${ml.length} leads) ---,,,,,,,,${channelMap[market] || ""},,\n\n`;
-        ml.forEach(l => {
-          csv += [
-            esc(l.first_name), esc(l.last_name), esc(l.title), esc(l._companyName),
-            esc(l.email), esc(l.email_status), esc(l.linkedin_url),
-            esc(l._market), esc(channelMap[l._market] || ""),
-            l._scoreData?.score || 0, esc(l._scoreData?.grade || "D"),
-          ].join(",") + "\n";
-        });
-      });
-
-      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `Voxelised-Leads-${new Date().toISOString().split("T")[0]}.csv`;
-      a.click();
-      URL.revokeObjectURL(url);
-    }
-
-    // ━━━ API CALLS (via proxy) ━━━
-    const API_BASE = window.location.origin;
-
-    async function apiSearch(apiKey, body) {
-      const res = await fetch(`${API_BASE}/api/search`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ apiKey, ...body }),
-      });
-      if (!res.ok) throw new Error(`${res.status}: ${await res.text()}`);
-      return res.json();
-    }
-
-    async function apiEnrich(apiKey, ids) {
-      const res = await fetch(`${API_BASE}/api/enrich`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ apiKey, details: ids.map(id => ({ id })) }),
-      });
-      if (!res.ok) throw new Error(`${res.status}: ${await res.text()}`);
-      return res.json();
-    }
-
-    // ━━━ COMPONENTS ━━━
-
-    function FilterField({ label, value, onChange, placeholder, mono, multiline }) {
-      const props = {
-        className: "input", value, onChange: e => onChange(e.target.value), placeholder,
-        style: mono ? { fontFamily: "var(--mono)", fontSize: "0.78rem" } : {},
-      };
-      return (
-        <div style={{ marginBottom: "0.9rem" }}>
-          <label className="label">{label}</label>
-          {multiline ? <textarea {...props} rows={3} /> : <input {...props} />}
-        </div>
-      );
-    }
-
-    function StatCard({ label, value, color }) {
-      return (
-        <div style={{ padding: "0.8rem 1.2rem", background: "var(--bg-1)", borderRadius: 8, border: "1px solid var(--bg-3)", minWidth: 75, flex: "1 1 75px" }}>
-          <div style={{ fontSize: "1.5rem", fontWeight: 800, color, lineHeight: 1 }}>{value}</div>
-          <div style={{ fontSize: "0.6rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--fg-4)", marginTop: 4 }}>{label}</div>
-        </div>
-      );
-    }
-
-    function GradeBadge({ grade, score }) {
-      const c = { A: "#00ff88", B: "#88ff00", C: "#ffaa00", D: "#ff4444" }[grade] || "#666";
-      return (
-        <span style={{ display: "inline-flex", alignItems: "center", gap: 5 }}>
-          <span style={{
-            width: 22, height: 22, borderRadius: "50%", background: `${c}18`, color: c,
-            display: "inline-flex", alignItems: "center", justifyContent: "center",
-            fontSize: "0.7rem", fontWeight: 700,
-          }}>{grade}</span>
-          <span style={{ color: "var(--fg-3)", fontSize: "0.75rem", fontFamily: "var(--mono)" }}>{score}</span>
-        </span>
-      );
-    }
-
-    // ━━━ MAIN APP ━━━
-    function App() {
-      const [apiKey, setApiKey] = useState("");
-      const [keySet, setKeySet] = useState(false);
-      const [tab, setTab] = useState("filters"); // filters, results (mobile toggle)
-      const [filters, setFilters] = useState({
-        titles: "CEO, CTO, Co-Founder, VP Marketing, VP Sales, COO, Founder",
-        seniorities: "founder, c_suite, vp, director",
-        locations: "", orgLocations: "", domains: "",
-        empMin: "50", empMax: "2000",
-        technologies: "", keywords: "",
-        emailStatus: "verified, likely to engage",
-        pages: "3", marketLabel: "India",
-      });
-      const [searchResults, setSearchResults] = useState([]);
-      const [enrichedLeads, setEnrichedLeads] = useState([]);
-      const [status, setStatus] = useState("");
-      const [phase, setPhase] = useState("idle");
-      const [progress, setProgress] = useState({ current: 0, total: 0 });
-      const [creditsUsed, setCreditsUsed] = useState(0);
-      const abortRef = useRef(false);
-
-      const setF = (k, v) => setFilters(p => ({ ...p, [k]: v }));
-      const parseList = s => s.split(",").map(x => x.trim()).filter(Boolean);
-
-      // ── SEARCH ──
-      const handleSearch = async () => {
-        if (!apiKey) return;
-        abortRef.current = false;
-        setPhase("searching");
-        setSearchResults([]);
-        setEnrichedLeads([]);
-        setCreditsUsed(0);
-
-        const totalPages = parseInt(filters.pages) || 3;
-        let all = [];
-
-        try {
-          for (let p = 1; p <= totalPages; p++) {
-            if (abortRef.current) break;
-            setStatus(`Searching page ${p}/${totalPages}...`);
-
-            const body = { page: p, per_page: 100 };
-            const titles = parseList(filters.titles);
-            if (titles.length) body.person_titles = titles;
-            const sen = parseList(filters.seniorities);
-            if (sen.length) body.person_seniorities = sen;
-            const pLoc = parseList(filters.locations);
-            if (pLoc.length) body.person_locations = pLoc;
-            const oLoc = parseList(filters.orgLocations);
-            if (oLoc.length) body.organization_locations = oLoc;
-            const doms = parseList(filters.domains);
-            if (doms.length) body.q_organization_domains_list = doms;
-            if (filters.empMin || filters.empMax) {
-              body.organization_num_employees_ranges = [`${filters.empMin || "1"},${filters.empMax || "10000"}`];
-            }
-            const techs = parseList(filters.technologies);
-            if (techs.length) body.currently_using_any_of_technology_uids = techs;
-            if (filters.keywords) body.q_keywords = filters.keywords;
-            const es = parseList(filters.emailStatus);
-            if (es.length) body.contact_email_status = es;
-
-            const data = await apiSearch(apiKey, body);
-            const people = data.people || [];
-            if (!people.length) break;
-            all = [...all, ...people];
-            setSearchResults([...all]);
-            if (p < totalPages) await new Promise(r => setTimeout(r, 1200));
-          }
-          setStatus(`Found ${all.length} leads. Hit ENRICH to get emails & scores.`);
-          setPhase("idle");
-          setTab("results");
-        } catch (err) {
-          setStatus(`Search error: ${err.message}`);
-          setPhase("idle");
-        }
-      };
-
-      // ── ENRICH ──
-      const handleEnrich = async () => {
-        if (!searchResults.length) return;
-        abortRef.current = false;
-        setPhase("enriching");
-        setEnrichedLeads([]);
-
-        const ids = searchResults.map(p => p.id).filter(Boolean);
-        const batches = [];
-        for (let i = 0; i < ids.length; i += 10) batches.push(ids.slice(i, i + 10));
-
-        setProgress({ current: 0, total: ids.length });
-        let all = [];
-        let credits = 0;
-
-        for (let i = 0; i < batches.length; i++) {
-          if (abortRef.current) { setStatus(`Stopped. ${all.length} enriched so far.`); break; }
-          setStatus(`Enriching batch ${i + 1}/${batches.length} — ${credits} credits used`);
-
-          try {
-            const data = await apiEnrich(apiKey, batches[i]);
-            credits += data.credits_consumed || batches[i].length;
-            setCreditsUsed(credits);
-
-            (data.matches || []).forEach(m => {
-              const org = m.organization || {};
-              m._market = filters.marketLabel || detectMarket(m, org);
-              m._companyName = org.name || m.employment_history?.[0]?.organization_name || "";
-              m._scoreData = scoreLead(m, org);
-            });
-
-            all = [...all, ...(data.matches || [])];
-            setEnrichedLeads([...all]);
-            setProgress({ current: all.length, total: ids.length });
-          } catch (err) {
-            setStatus(`Batch ${i + 1} error: ${err.message}. Retrying in 3s...`);
-            await new Promise(r => setTimeout(r, 3000));
-            i--; // retry
-            continue;
-          }
-          if (i < batches.length - 1) await new Promise(r => setTimeout(r, 1500));
-        }
-        setStatus(`Done! ${all.length} enriched. ${credits} Apollo credits used.`);
-        setPhase("done");
-      };
-
-      const displayLeads = enrichedLeads.length ? enrichedLeads : searchResults;
-      const sorted = [...displayLeads].sort((a, b) => (b._scoreData?.score || 0) - (a._scoreData?.score || 0));
-
-      const stats = enrichedLeads.length ? {
-        total: enrichedLeads.length,
-        withEmail: enrichedLeads.filter(l => l.email).length,
-        verified: enrichedLeads.filter(l => l.email_status === "verified").length,
-        avg: Math.round(enrichedLeads.reduce((s, l) => s + (l._scoreData?.score || 0), 0) / enrichedLeads.length),
-        a: enrichedLeads.filter(l => l._scoreData?.grade === "A").length,
-        b: enrichedLeads.filter(l => l._scoreData?.grade === "B").length,
-      } : null;
-
-      // ── KEY SCREEN ──
-      if (!keySet) {
-        return (
-          <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
-            <div className="fade-in" style={{ maxWidth: 440, width: "100%" }}>
-              <div style={{ marginBottom: 48 }}>
-                <div style={{ fontSize: "0.7rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "var(--fg-4)", marginBottom: 6 }}>Voxelised</div>
-                <h1 style={{ fontSize: "2.4rem", fontWeight: 800, lineHeight: 1, margin: "0 0 12px 0" }}>Lead Engine</h1>
-                <p style={{ color: "var(--fg-3)", fontSize: "0.9rem", lineHeight: 1.5 }}>
-                  Search Apollo → Enrich in batches → Score & grade → Export CSV with outreach channels.
-                </p>
-              </div>
-              <div style={{ marginBottom: 20 }}>
-                <label className="label">Apollo API Key</label>
-                <input
-                  type="password" value={apiKey} onChange={e => setApiKey(e.target.value)}
-                  className="input" placeholder="Paste your Apollo.io API key"
-                  onKeyDown={e => e.key === "Enter" && apiKey && setKeySet(true)}
-                  style={{ padding: "0.9rem 1rem", fontSize: "0.9rem" }}
-                />
-              </div>
-              <button className="btn btn-primary" style={{ width: "100%", padding: "0.85rem" }}
-                onClick={() => apiKey && setKeySet(true)} disabled={!apiKey}>
-                CONNECT →
-              </button>
-              <p style={{ color: "var(--fg-4)", fontSize: "0.7rem", marginTop: 14, textAlign: "center" }}>
-                Key stays in your browser session. Only sent to Apollo's API via our proxy.
-              </p>
-            </div>
+  return(<div style={{minHeight:"100vh",display:"flex",flexDirection:"column"}}>
+    <header style={{borderBottom:"1px solid var(--bg-2)",padding:"0.6rem 1.5rem",display:"flex",justifyContent:"space-between",alignItems:"center",flexShrink:0}}>
+      <div style={{display:"flex",alignItems:"center",gap:14}}><span style={{fontSize:"0.65rem",letterSpacing:"0.25em",textTransform:"uppercase",color:"var(--fg-4)"}}>Voxelised</span><span style={{fontSize:"1.1rem",fontWeight:700}}>Lead Engine</span>{creditsUsed>0&&<span style={{fontSize:"0.7rem",color:"var(--warn)",fontFamily:"var(--mono)",background:"#1a1100",padding:"2px 8px",borderRadius:3}}>{creditsUsed} credits</span>}</div>
+      <div style={{display:"flex",alignItems:"center",gap:10}}><div style={{width:7,height:7,borderRadius:"50%",background:"var(--accent)"}}/><span style={{fontSize:"0.75rem",color:"var(--fg-3)"}}>Connected</span><button onClick={()=>{setKeySet(false);setApiKey("")}} style={{background:"none",border:"1px solid var(--bg-3)",color:"var(--fg-4)",padding:"3px 10px",borderRadius:4,fontSize:"0.65rem",cursor:"pointer"}}>Disconnect</button></div>
+    </header>
+    <div style={{borderBottom:"1px solid var(--bg-2)",padding:"0 1.5rem",display:"flex",gap:4}}>
+      <button className={`tab ${mode==="search"?"active":""}`} onClick={()=>setMode("search")}>⚡ Search + Enrich</button>
+      <button className={`tab ${mode==="upload"?"active":""}`} onClick={()=>setMode("upload")}>📄 Upload CSV + Enrich</button>
+    </div>
+    <div style={{display:"flex",flex:1,overflow:"hidden"}}>
+      <aside style={{width:340,borderRight:"1px solid var(--bg-2)",padding:"1.2rem",overflowY:"auto",flexShrink:0}}>
+        {mode==="search"?<>
+          <div className="label" style={{marginBottom:16,fontSize:"0.65rem"}}>Search Filters</div>
+          <FF label="Job Titles" value={filters.titles} onChange={v=>setF("titles",v)} placeholder="CEO, CTO, VP Marketing"/>
+          <FF label="Seniorities" value={filters.seniorities} onChange={v=>setF("seniorities",v)} placeholder="founder, c_suite, vp"/>
+          <FF label="Person Locations" value={filters.locations} onChange={v=>setF("locations",v)} placeholder="India, Singapore"/>
+          <FF label="Org HQ Locations" value={filters.orgLocations} onChange={v=>setF("orgLocations",v)} placeholder="San Francisco, CA"/>
+          <FF label="Company Domains" value={filters.domains} onChange={v=>setF("domains",v)} placeholder="hevodata.com, moengage.com" multiline/>
+          <FF label="Technologies" value={filters.technologies} onChange={v=>setF("technologies",v)} placeholder="hubspot, salesforce"/>
+          <FF label="Keywords" value={filters.keywords} onChange={v=>setF("keywords",v)} placeholder="SaaS, fintech"/>
+          <FF label="Email Status" value={filters.emailStatus} onChange={v=>setF("emailStatus",v)} placeholder="verified, likely to engage"/>
+          <div style={{display:"flex",gap:10,marginBottom:"0.9rem"}}><div style={{flex:1}}><label className="label">Emp Min</label><input className="input" value={filters.empMin} onChange={e=>setF("empMin",e.target.value)}/></div><div style={{flex:1}}><label className="label">Emp Max</label><input className="input" value={filters.empMax} onChange={e=>setF("empMax",e.target.value)}/></div></div>
+          <div style={{display:"flex",gap:10,marginBottom:"0.9rem"}}><div style={{flex:1}}><label className="label">Pages</label><input className="input" value={filters.pages} onChange={e=>setF("pages",e.target.value)}/></div><div style={{flex:1}}><label className="label">Market</label><select className="input" value={filters.marketLabel} onChange={e=>setF("marketLabel",e.target.value)}><option value="India">India</option><option value="Gulf">Gulf</option><option value="ANZ/SEA">ANZ/SEA</option><option value="US/UK/EU">US/UK/EU</option><option value="">Auto-detect</option></select></div></div>
+          <div style={{display:"flex",gap:8,marginTop:20}}><button className="btn btn-primary" style={{flex:1}} onClick={handleSearch} disabled={phase==="searching"||phase==="enriching"}>{phase==="searching"?<span className="pulse">SEARCHING...</span>:"① SEARCH"}</button><button className={`btn ${searchResults.length?"btn-accent":""}`} style={{flex:1,...(searchResults.length?{}:{background:"var(--bg-3)",color:"var(--fg-4)"})}} onClick={handleEnrichSearch} disabled={!searchResults.length||phase==="enriching"}>{phase==="enriching"&&mode==="search"?<span className="pulse">ENRICHING...</span>:"② ENRICH"}</button></div>
+        </>:<>
+          <div className="label" style={{marginBottom:16,fontSize:"0.65rem"}}>Upload Unenriched CSV</div>
+          <div className="drop-zone" onDrop={handleDrop} onDragOver={e=>{e.preventDefault();e.currentTarget.classList.add("dragover")}} onDragLeave={e=>e.currentTarget.classList.remove("dragover")} onClick={()=>fileRef.current?.click()}>
+            <input ref={fileRef} type="file" accept=".csv" style={{display:"none"}} onChange={e=>handleFileUpload(e.target.files?.[0])}/>
+            {csvRows.length>0?<div><div style={{fontSize:"0.85rem",fontWeight:600,marginBottom:4}}>{csvFilename}</div><div style={{fontSize:"0.75rem",color:"var(--accent)"}}>{csvRows.length} leads loaded</div><div style={{fontSize:"0.65rem",color:"var(--fg-4)",marginTop:8}}>Drop new file or click to replace</div></div>
+            :<div><div style={{fontSize:28,marginBottom:8,opacity:.3}}>📄</div><div style={{fontSize:"0.85rem",color:"var(--fg-3)"}}>Drop CSV here or click to browse</div><div style={{fontSize:"0.7rem",color:"var(--fg-4)",marginTop:8,lineHeight:1.5}}>Columns: First Name, Title, Company Name, Domain, Apollo ID, Email, LinkedIn, Market</div></div>}
           </div>
-        );
-      }
-
-      // ── MAIN ──
-      return (
-        <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
-          {/* HEADER */}
-          <header style={{ borderBottom: "1px solid var(--bg-2)", padding: "0.8rem 1.5rem", display: "flex", justifyContent: "space-between", alignItems: "center", flexShrink: 0 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-              <span style={{ fontSize: "0.65rem", letterSpacing: "0.25em", textTransform: "uppercase", color: "var(--fg-4)" }}>Voxelised</span>
-              <span style={{ fontSize: "1.1rem", fontWeight: 700 }}>Lead Engine</span>
-              {creditsUsed > 0 && (
-                <span style={{ fontSize: "0.7rem", color: "var(--warn)", fontFamily: "var(--mono)", background: "#1a1100", padding: "2px 8px", borderRadius: 3 }}>
-                  {creditsUsed} credits
-                </span>
-              )}
+          {csvRows.length>0&&<div style={{marginTop:16}}>
+            <div className="label" style={{marginBottom:8}}>Preview ({csvRows.length} rows)</div>
+            <div style={{background:"var(--bg-1)",borderRadius:6,padding:10,border:"1px solid var(--bg-3)",maxHeight:200,overflowY:"auto"}}>
+              {csvRows.slice(0,5).map((row,i)=><div key={i} style={{fontSize:"0.72rem",color:"var(--fg-2)",padding:"4px 0",borderBottom:"1px solid var(--bg-3)",fontFamily:"var(--mono)"}}>{row["first name"]||row["firstname"]||row["name"]||"?"} — {row["company name"]||row["company"]||"?"} — {row["domain"]||row["domain search in apollo"]||"?"}</div>)}
+              {csvRows.length>5&&<div style={{fontSize:"0.65rem",color:"var(--fg-4)",paddingTop:4}}>...and {csvRows.length-5} more</div>}
             </div>
-            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <div style={{ width: 7, height: 7, borderRadius: "50%", background: "var(--accent)" }} />
-              <span style={{ fontSize: "0.75rem", color: "var(--fg-3)" }}>Connected</span>
-              <button onClick={() => { setKeySet(false); setApiKey(""); }} style={{
-                background: "none", border: "1px solid var(--bg-3)", color: "var(--fg-4)",
-                padding: "3px 10px", borderRadius: 4, fontSize: "0.65rem", cursor: "pointer",
-              }}>Disconnect</button>
-            </div>
-          </header>
-
-          <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
-            {/* LEFT - FILTERS */}
-            <aside style={{ width: 340, borderRight: "1px solid var(--bg-2)", padding: "1.2rem 1.2rem", overflowY: "auto", flexShrink: 0 }}>
-              <div className="label" style={{ marginBottom: 16, fontSize: "0.65rem" }}>Search Filters</div>
-
-              <FilterField label="Job Titles" value={filters.titles} onChange={v => setF("titles", v)} placeholder="CEO, CTO, VP Marketing" />
-              <FilterField label="Seniorities" value={filters.seniorities} onChange={v => setF("seniorities", v)} placeholder="founder, c_suite, vp" />
-              <FilterField label="Person Locations" value={filters.locations} onChange={v => setF("locations", v)} placeholder="India, Singapore" />
-              <FilterField label="Org HQ Locations" value={filters.orgLocations} onChange={v => setF("orgLocations", v)} placeholder="San Francisco, CA" />
-              <FilterField label="Company Domains (one per line or comma)" value={filters.domains} onChange={v => setF("domains", v)} placeholder="hevodata.com, moengage.com" multiline mono />
-              <FilterField label="Technologies" value={filters.technologies} onChange={v => setF("technologies", v)} placeholder="hubspot, salesforce" />
-              <FilterField label="Keywords" value={filters.keywords} onChange={v => setF("keywords", v)} placeholder="SaaS, fintech, B2B" />
-              <FilterField label="Email Status Filter" value={filters.emailStatus} onChange={v => setF("emailStatus", v)} placeholder="verified, likely to engage" />
-
-              <div style={{ display: "flex", gap: 10, marginBottom: "0.9rem" }}>
-                <div style={{ flex: 1 }}>
-                  <label className="label">Emp Min</label>
-                  <input className="input" value={filters.empMin} onChange={e => setF("empMin", e.target.value)} />
-                </div>
-                <div style={{ flex: 1 }}>
-                  <label className="label">Emp Max</label>
-                  <input className="input" value={filters.empMax} onChange={e => setF("empMax", e.target.value)} />
-                </div>
-              </div>
-
-              <div style={{ display: "flex", gap: 10, marginBottom: "0.9rem" }}>
-                <div style={{ flex: 1 }}>
-                  <label className="label">Pages</label>
-                  <input className="input" value={filters.pages} onChange={e => setF("pages", e.target.value)} />
-                </div>
-                <div style={{ flex: 1 }}>
-                  <label className="label">Market Label</label>
-                  <select className="input" value={filters.marketLabel} onChange={e => setF("marketLabel", e.target.value)}>
-                    <option value="India">India</option>
-                    <option value="Gulf">Gulf</option>
-                    <option value="ANZ/SEA">ANZ/SEA</option>
-                    <option value="US/UK/EU">US/UK/EU</option>
-                    <option value="">Auto-detect</option>
-                  </select>
-                </div>
-              </div>
-
-              {/* ACTION BUTTONS */}
-              <div style={{ display: "flex", gap: 8, marginTop: 20 }}>
-                <button className="btn btn-primary" style={{ flex: 1 }}
-                  onClick={handleSearch} disabled={phase === "searching" || phase === "enriching"}>
-                  {phase === "searching" ? <span className="pulse">SEARCHING...</span> : "① SEARCH"}
-                </button>
-                <button className={`btn ${searchResults.length ? "btn-accent" : ""}`}
-                  style={{ flex: 1, ...(searchResults.length ? {} : { background: "var(--bg-3)", color: "var(--fg-4)" }) }}
-                  onClick={handleEnrich} disabled={!searchResults.length || phase === "enriching"}>
-                  {phase === "enriching" ? <span className="pulse">ENRICHING...</span> : "② ENRICH"}
-                </button>
-              </div>
-
-              {phase === "enriching" && (
-                <button className="btn btn-danger" style={{ width: "100%", marginTop: 6 }}
-                  onClick={() => { abortRef.current = true; }}>STOP</button>
-              )}
-
-              {enrichedLeads.length > 0 && (
-                <button className="btn btn-ghost" style={{ width: "100%", marginTop: 10 }}
-                  onClick={() => exportCSV(enrichedLeads)}>
-                  ③ EXPORT CSV — {enrichedLeads.length} leads
-                </button>
-              )}
-
-              {/* STATUS */}
-              {status && (
-                <div style={{ marginTop: 14, padding: 10, background: "var(--bg-1)", borderRadius: 6, border: "1px solid var(--bg-3)" }}>
-                  <div style={{ fontSize: "0.75rem", color: "var(--fg-2)", wordBreak: "break-word" }}>{status}</div>
-                  {progress.total > 0 && (
-                    <div style={{ marginTop: 8 }}>
-                      <div style={{ height: 3, background: "var(--bg-3)", borderRadius: 2, overflow: "hidden" }}>
-                        <div style={{ height: 3, background: "var(--accent)", borderRadius: 2, width: `${(progress.current / progress.total) * 100}%`, transition: "width 0.3s" }} />
-                      </div>
-                      <div style={{ fontSize: "0.65rem", color: "var(--fg-4)", marginTop: 4, fontFamily: "var(--mono)" }}>
-                        {progress.current}/{progress.total} • ~{Math.ceil((progress.total - progress.current) / 10 * 1.5)}s left
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
-            </aside>
-
-            {/* RIGHT - RESULTS */}
-            <main style={{ flex: 1, padding: "1.2rem 1.5rem", overflowY: "auto" }}>
-              {/* STATS */}
-              {stats && (
-                <div className="fade-in" style={{ display: "flex", gap: 10, marginBottom: 20, flexWrap: "wrap" }}>
-                  <StatCard label="Total" value={stats.total} color="var(--fg)" />
-                  <StatCard label="Has Email" value={stats.withEmail} color="var(--accent)" />
-                  <StatCard label="Verified" value={stats.verified} color="#00cc66" />
-                  <StatCard label="Avg Score" value={stats.avg} color="var(--warn)" />
-                  <StatCard label="Grade A" value={stats.a} color="var(--accent)" />
-                  <StatCard label="Grade B" value={stats.b} color="#88ff00" />
-                </div>
-              )}
-
-              {/* TABLE */}
-              {sorted.length > 0 ? (
-                <div style={{ overflowX: "auto" }}>
-                  <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                    <thead>
-                      <tr style={{ borderBottom: "1px solid var(--bg-3)" }}>
-                        {["#", "Score", "Name", "Title", "Company", "Email", "Mkt"].map(h => (
-                          <th key={h} style={{
-                            padding: "0.6rem 0.7rem", textAlign: "left", fontSize: "0.6rem",
-                            letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--fg-4)",
-                            fontWeight: 500, whiteSpace: "nowrap",
-                          }}>{h}</th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {sorted.map((l, i) => (
-                        <tr key={l.id || i} style={{ borderBottom: "1px solid var(--bg-1)" }}
-                          title={l._scoreData?.reasons?.join(" | ")}>
-                          <td style={{ padding: "0.55rem 0.7rem", color: "var(--fg-4)", fontSize: "0.75rem", fontFamily: "var(--mono)" }}>{i + 1}</td>
-                          <td style={{ padding: "0.55rem 0.7rem" }}>
-                            {l._scoreData ? <GradeBadge grade={l._scoreData.grade} score={l._scoreData.score} /> : <span style={{ color: "var(--fg-4)" }}>—</span>}
-                          </td>
-                          <td style={{ padding: "0.55rem 0.7rem", fontWeight: 600, whiteSpace: "nowrap" }}>
-                            {l.first_name} {l.last_name}
-                            {l.linkedin_url && (
-                              <a href={l.linkedin_url} target="_blank" rel="noopener noreferrer"
-                                style={{ marginLeft: 5, color: "#0a66c2", fontSize: "0.65rem", textDecoration: "none", opacity: 0.7 }}>↗</a>
-                            )}
-                          </td>
-                          <td style={{ padding: "0.55rem 0.7rem", color: "var(--fg-2)", maxWidth: 180, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontSize: "0.82rem" }}>
-                            {l.title}
-                          </td>
-                          <td style={{ padding: "0.55rem 0.7rem", color: "var(--fg-3)", fontSize: "0.82rem", whiteSpace: "nowrap" }}>
-                            {l._companyName || l.organization?.name || ""}
-                          </td>
-                          <td style={{ padding: "0.55rem 0.7rem", fontFamily: "var(--mono)", fontSize: "0.72rem" }}>
-                            {l.email ? (
-                              <span style={{ color: l.email_status === "verified" ? "var(--accent)" : "var(--warn)" }}>{l.email}</span>
-                            ) : <span style={{ color: "var(--fg-4)" }}>—</span>}
-                          </td>
-                          <td style={{ padding: "0.55rem 0.7rem" }}>
-                            <span style={{ padding: "1px 7px", background: "var(--bg-2)", borderRadius: 3, fontSize: "0.65rem", color: "var(--fg-3)", whiteSpace: "nowrap" }}>
-                              {l._market || "—"}
-                            </span>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              ) : (
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "70%", flexDirection: "column", opacity: 0.5 }}>
-                  <div style={{ fontSize: 56, marginBottom: 16, filter: "grayscale(1)" }}>⚡</div>
-                  <div style={{ fontSize: "0.95rem", color: "var(--fg-4)", textAlign: "center", maxWidth: 360, lineHeight: 1.6 }}>
-                    Set filters → <strong style={{ color: "var(--fg-2)" }}>Search</strong> to find leads → <strong style={{ color: "var(--accent)" }}>Enrich</strong> for full data & scores → <strong style={{ color: "var(--fg-2)" }}>Export</strong> CSV
-                  </div>
-                  <div style={{ fontSize: "0.7rem", color: "var(--fg-4)", marginTop: 10 }}>1 Apollo credit per enriched lead</div>
-                </div>
-              )}
-            </main>
-          </div>
-        </div>
-      );
-    }
-
-    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
-  </script>
+            <button className="btn btn-accent" style={{width:"100%",marginTop:12}} onClick={handleEnrichCSV} disabled={phase==="enriching"}>{phase==="enriching"&&mode==="upload"?<span className="pulse">ENRICHING CSV...</span>:`ENRICH ${csvRows.length} LEADS`}</button>
+          </div>}
+        </>}
+        {phase==="enriching"&&<button className="btn btn-danger" style={{width:"100%",marginTop:6}} onClick={()=>{abortRef.current=true}}>STOP</button>}
+        {activeLeads.length>0&&activeLeads[0]?._scoreData&&<button className="btn btn-ghost" style={{width:"100%",marginTop:10}} onClick={()=>exportCSV(activeLeads)}>EXPORT CSV — {activeLeads.length} leads</button>}
+        {status&&<div style={{marginTop:14,padding:10,background:"var(--bg-1)",borderRadius:6,border:"1px solid var(--bg-3)"}}><div style={{fontSize:"0.75rem",color:"var(--fg-2)",wordBreak:"break-word"}}>{status}</div>{progress.total>0&&<div style={{marginTop:8}}><div style={{height:3,background:"var(--bg-3)",borderRadius:2,overflow:"hidden"}}><div style={{height:3,background:"var(--accent)",borderRadius:2,width:`${(progress.current/progress.total)*100}%`,transition:"width 0.3s"}}/></div><div style={{fontSize:"0.65rem",color:"var(--fg-4)",marginTop:4,fontFamily:"var(--mono)"}}>{progress.current}/{progress.total} • ~{Math.ceil((progress.total-progress.current)/10*1.5)}s left</div></div>}</div>}
+      </aside>
+      <main style={{flex:1,padding:"1.2rem 1.5rem",overflowY:"auto"}}>
+        {stats&&<div style={{display:"flex",gap:10,marginBottom:20,flexWrap:"wrap"}}><SC label="Total" value={stats.total} color="var(--fg)"/><SC label="Has Email" value={stats.em} color="var(--accent)"/><SC label="Verified" value={stats.ver} color="#00cc66"/><SC label="Avg Score" value={stats.avg} color="var(--warn)"/><SC label="Grade A" value={stats.a} color="var(--accent)"/><SC label="Grade B" value={stats.b} color="#88ff00"/></div>}
+        {activeLeads.length>0?<LT leads={activeLeads}/>:<div style={{display:"flex",alignItems:"center",justifyContent:"center",height:"70%",flexDirection:"column",opacity:.5}}><div style={{fontSize:56,marginBottom:16,filter:"grayscale(1)"}}>⚡</div><div style={{fontSize:"0.95rem",color:"var(--fg-4)",textAlign:"center",maxWidth:400,lineHeight:1.6}}>{mode==="search"?<>Set filters → <strong style={{color:"var(--fg-2)"}}>Search</strong> → <strong style={{color:"var(--accent)"}}>Enrich</strong> → Export CSV</>:<>Upload unenriched CSV → <strong style={{color:"var(--accent)"}}>Enrich</strong> → get scored leads with emails</>}</div><div style={{fontSize:"0.7rem",color:"var(--fg-4)",marginTop:10}}>1 Apollo credit per enriched lead</div></div>}
+      </main>
+    </div>
+  </div>)}
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
 </body>
 </html>

@@ -1,143 +1,366 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>Voxelised Lead Engine</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23000'/><text x='6' y='24' font-size='22' fill='%2300ff88'>V</text></svg>" />
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23000'/><text x='6' y='24' font-size='22' fill='%2300ff88'>V</text></svg>"/>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
   <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
   <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
   <style>
     *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-    :root{--bg:#000;--bg-1:#0a0a0a;--bg-2:#111;--bg-3:#1a1a1a;--fg:#fff;--fg-1:#ccc;--fg-2:#888;--fg-3:#555;--fg-4:#333;--accent:#00ff88;--accent-dim:#003311;--warn:#ffaa00;--err:#ff4444;--font:'Bricolage Grotesque',system-ui,sans-serif;--mono:'JetBrains Mono',monospace}
-    html{font-size:14px}body{background:var(--bg);color:var(--fg);font-family:var(--font);min-height:100vh;overflow-x:hidden}
-    input,textarea,select,button{font-family:inherit}::selection{background:var(--accent);color:var(--bg)}
-    ::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--bg-3);border-radius:3px}
+    :root{--bg:#000;--bg1:#0a0a0a;--bg2:#111;--bg3:#1a1a1a;--fg:#fff;--fg1:#ccc;--fg2:#888;--fg3:#555;--fg4:#333;--ac:#00ff88;--acd:#003311;--warn:#ffaa00;--err:#ff4444;--font:'Bricolage Grotesque',system-ui,sans-serif;--mono:'JetBrains Mono',monospace}
+    html{font-size:14px}body{background:var(--bg);color:var(--fg);font-family:var(--font);min-height:100vh}
+    input,textarea,select,button{font-family:inherit}::selection{background:var(--ac);color:var(--bg)}
+    ::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--bg3);border-radius:3px}
     @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}.pulse{animation:pulse 1.5s ease-in-out infinite}
-    .label{font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;color:var(--fg-3);font-weight:500;display:block;margin-bottom:.35rem}
-    .input{width:100%;padding:.65rem .8rem;background:var(--bg-1);border:1px solid var(--bg-3);border-radius:5px;color:var(--fg-1);font-size:.85rem;outline:none;transition:border-color .2s}
-    .input:focus{border-color:var(--fg-3)}.input::placeholder{color:var(--fg-4)}textarea.input{resize:vertical;font-family:var(--mono);font-size:.78rem}
+    .lbl{font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;color:var(--fg3);font-weight:500;display:block;margin-bottom:.35rem}
+    .inp{width:100%;padding:.65rem .8rem;background:var(--bg1);border:1px solid var(--bg3);border-radius:5px;color:var(--fg1);font-size:.85rem;outline:none;transition:border-color .2s}
+    .inp:focus{border-color:var(--fg3)}.inp::placeholder{color:var(--fg4)}textarea.inp{resize:vertical;font-family:var(--mono);font-size:.78rem}
     .btn{padding:.7rem 1.2rem;border:none;border-radius:5px;font-size:.8rem;font-weight:600;letter-spacing:.08em;cursor:pointer;transition:all .15s}
-    .btn:disabled{opacity:.35;cursor:default}.btn-primary{background:var(--fg);color:var(--bg)}.btn-accent{background:var(--accent);color:var(--bg)}
-    .btn-ghost{background:var(--bg-1);color:var(--accent);border:1px solid var(--accent-dim)}.btn-danger{background:#1a0000;color:var(--err);border:1px solid #330000}
-    .tab{padding:8px 16px;background:none;border:none;color:var(--fg-4);font-size:.78rem;font-weight:600;cursor:pointer;border-bottom:2px solid transparent;letter-spacing:.08em;transition:all .15s}
-    .tab.active{color:var(--fg);border-bottom-color:var(--accent)}.tab:hover{color:var(--fg-2)}
-    .drop-zone{border:2px dashed var(--bg-3);border-radius:8px;padding:40px 24px;text-align:center;cursor:pointer;transition:all .2s}
-    .drop-zone:hover,.drop-zone.dragover{border-color:var(--accent);background:rgba(0,255,136,.03)}
+    .btn:disabled{opacity:.35;cursor:default}
+    .tab{padding:8px 16px;background:none;border:none;color:var(--fg4);font-size:.78rem;font-weight:600;cursor:pointer;border-bottom:2px solid transparent;letter-spacing:.08em;transition:all .15s}
+    .tab.active{color:var(--fg);border-bottom-color:var(--ac)}.tab:hover{color:var(--fg2)}
+    .dz{border:2px dashed var(--bg3);border-radius:8px;padding:40px 24px;text-align:center;cursor:pointer;transition:all .2s}
+    .dz:hover,.dz.over{border-color:var(--ac);background:rgba(0,255,136,.03)}
   </style>
 </head>
 <body>
 <div id="root"></div>
 <script type="text/babel">
 const{useState,useRef,useCallback}=React;
-function scoreLead(p,o){let s=0;const r=[];const es=p.email_status;if(es==="verified"){s+=30;r.push("Verified +30")}else if(es==="likely to engage"){s+=20;r.push("Likely +20")}else if(p.email){s+=10;r.push("Has email +10")}const sn=p.seniority||"";const sm={founder:25,owner:25,c_suite:22,vp:18,director:14,manager:8,senior:4};if(sm[sn]){s+=sm[sn];r.push(sn+" +"+sm[sn])}const e=o?.estimated_num_employees||0;if(e>=50&&e<=500)s+=15;else if(e>500&&e<=2000)s+=12;else if(e>2000)s+=8;else if(e>=20)s+=10;else s+=3;const rv=o?.organization_revenue||0;if(rv>=1e6&&rv<=1e8)s+=15;else if(rv>1e8)s+=10;else if(rv>0)s+=5;const g=o?.organization_headcount_twelve_month_growth||0;if(g>.2)s+=10;else if(g>.05)s+=6;else if(g>0)s+=3;if(p.linkedin_url)s+=5;const sc=Math.min(s,100);return{score:sc,reasons:r,grade:sc>=80?"A":sc>=60?"B":sc>=40?"C":"D"}}
-function detectMarket(p,o){const l=[p.country,p.city,p.state,o?.country,o?.city].filter(Boolean).join(" ").toLowerCase();if(/india|mumbai|bengaluru|bangalore|hyderabad|chennai|pune|delhi|noida|gurugram/.test(l))return"India";if(/saudi|uae|emirates|dubai|abu dhabi|riyadh|qatar|bahrain|kuwait|oman|egypt|jordan/.test(l))return"Gulf";if(/australia|new zealand|singapore|malaysia|indonesia|vietnam|thailand|philippines/.test(l))return"ANZ/SEA";if(/united states|canada|united kingdom|uk|london|germany|france/.test(l))return"US/UK/EU";return"Other"}
-function exportCSV(leads){const ch={"India":"Email + LinkedIn simultaneous","Gulf":"LinkedIn FIRST then email 2-3 days later","ANZ/SEA":"Email + LinkedIn + Loom mandatory","US/UK/EU":"Email + LinkedIn + Loom","Other":"Email + LinkedIn"};const mkts={};leads.forEach(l=>{const m=l._market||"Other";if(!mkts[m])mkts[m]=[];mkts[m].push(l)});const esc=v=>`"${String(v||"").replace(/"/g,'""')}"`;let csv="First Name,Last Name,Title,Company Name,Email,Email Status,LinkedIn,Market,Outreach Channel,Score,Grade\n";["India","Gulf","ANZ/SEA","US/UK/EU","Other"].forEach(m=>{const ml=mkts[m];if(!ml?.length)return;ml.sort((a,b)=>(b._scoreData?.score||0)-(a._scoreData?.score||0));csv+=`\n--- ${m.toUpperCase()} (${ml.length} leads) ---,,,,,,,,${ch[m]||""},,\n\n`;ml.forEach(l=>{csv+=[esc(l.first_name),esc(l.last_name),esc(l.title),esc(l._companyName),esc(l.email),esc(l.email_status),esc(l.linkedin_url),esc(l._market),esc(ch[l._market]||""),l._scoreData?.score||0,esc(l._scoreData?.grade||"D")].join(",")+"\n"})});const blob=new Blob([csv],{type:"text/csv"});const u=URL.createObjectURL(blob);const a=document.createElement("a");a.href=u;a.download=`Voxelised-Leads-${new Date().toISOString().split("T")[0]}.csv`;a.click();URL.revokeObjectURL(u)}
-function parseCSV(text){const lines=text.split("\n").map(l=>l.trim()).filter(Boolean);if(lines.length<2)return[];function pl(line){const r=[];let c="";let q=false;for(let i=0;i<line.length;i++){const ch=line[i];if(ch==='"')q=!q;else if(ch===","&&!q){r.push(c.trim());c=""}else c+=ch}r.push(c.trim());return r}const hdrs=pl(lines[0]).map(h=>h.toLowerCase().replace(/[^a-z0-9_\s]/g,"").trim());const rows=[];for(let i=1;i<lines.length;i++){const line=lines[i];if(line.startsWith("---")||line.startsWith('"---'))continue;const vals=pl(line);if(vals.every(v=>!v))continue;const obj={};hdrs.forEach((h,idx)=>{obj[h]=vals[idx]||""});rows.push(obj)}return rows}
 const API=window.location.origin;
-async function apiSearch(k,body){const r=await fetch(`${API}/api/search`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({apiKey:k,...body})});if(!r.ok)throw new Error(await r.text());return r.json()}
-async function apiEnrich(k,details){const r=await fetch(`${API}/api/enrich`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({apiKey:k,details})});if(!r.ok)throw new Error(await r.text());return r.json()}
 
-function FF({label,value,onChange,placeholder,multiline}){return(<div style={{marginBottom:"0.9rem"}}><label className="label">{label}</label>{multiline?<textarea className="input" value={value} onChange={e=>onChange(e.target.value)} placeholder={placeholder} rows={3}/>:<input className="input" value={value} onChange={e=>onChange(e.target.value)} placeholder={placeholder}/>}</div>)}
-function SC({label,value,color}){return(<div style={{padding:"0.8rem 1.2rem",background:"var(--bg-1)",borderRadius:8,border:"1px solid var(--bg-3)",minWidth:75,flex:"1 1 75px"}}><div style={{fontSize:"1.5rem",fontWeight:800,color,lineHeight:1}}>{value}</div><div style={{fontSize:"0.6rem",letterSpacing:"0.15em",textTransform:"uppercase",color:"var(--fg-4)",marginTop:4}}>{label}</div></div>)}
-function GB({grade,score}){const c={A:"#00ff88",B:"#88ff00",C:"#ffaa00",D:"#ff4444"}[grade]||"#666";return(<span style={{display:"inline-flex",alignItems:"center",gap:5}}><span style={{width:22,height:22,borderRadius:"50%",background:c+"18",color:c,display:"inline-flex",alignItems:"center",justifyContent:"center",fontSize:"0.7rem",fontWeight:700}}>{grade}</span><span style={{color:"var(--fg-3)",fontSize:"0.75rem",fontFamily:"var(--mono)"}}>{score}</span></span>)}
-function LT({leads}){const sorted=[...leads].sort((a,b)=>(b._scoreData?.score||0)-(a._scoreData?.score||0));return(<div style={{overflowX:"auto"}}><table style={{width:"100%",borderCollapse:"collapse"}}><thead><tr style={{borderBottom:"1px solid var(--bg-3)"}}>{["#","Score","Name","Title","Company","Email","Mkt"].map(h=><th key={h} style={{padding:"0.6rem 0.7rem",textAlign:"left",fontSize:"0.6rem",letterSpacing:"0.12em",textTransform:"uppercase",color:"var(--fg-4)",fontWeight:500,whiteSpace:"nowrap"}}>{h}</th>)}</tr></thead><tbody>{sorted.map((l,i)=><tr key={l.id||i} style={{borderBottom:"1px solid var(--bg-1)"}} title={l._scoreData?.reasons?.join(" | ")}><td style={{padding:"0.55rem 0.7rem",color:"var(--fg-4)",fontSize:"0.75rem",fontFamily:"var(--mono)"}}>{i+1}</td><td style={{padding:"0.55rem 0.7rem"}}>{l._scoreData?<GB grade={l._scoreData.grade} score={l._scoreData.score}/>:"—"}</td><td style={{padding:"0.55rem 0.7rem",fontWeight:600,whiteSpace:"nowrap"}}>{l.first_name} {l.last_name}{l.linkedin_url&&<a href={l.linkedin_url} target="_blank" rel="noopener noreferrer" style={{marginLeft:5,color:"#0a66c2",fontSize:"0.65rem",textDecoration:"none",opacity:.7}}>↗</a>}</td><td style={{padding:"0.55rem 0.7rem",color:"var(--fg-2)",maxWidth:180,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",fontSize:"0.82rem"}}>{l.title}</td><td style={{padding:"0.55rem 0.7rem",color:"var(--fg-3)",fontSize:"0.82rem",whiteSpace:"nowrap"}}>{l._companyName||""}</td><td style={{padding:"0.55rem 0.7rem",fontFamily:"var(--mono)",fontSize:"0.72rem"}}>{l.email?<span style={{color:l.email_status==="verified"?"var(--accent)":"var(--warn)"}}>{l.email}</span>:<span style={{color:"var(--fg-4)"}}>—</span>}</td><td style={{padding:"0.55rem 0.7rem"}}><span style={{padding:"1px 7px",background:"var(--bg-2)",borderRadius:3,fontSize:"0.65rem",color:"var(--fg-3)",whiteSpace:"nowrap"}}>{l._market||"—"}</span></td></tr>)}</tbody></table></div>)}
+// ━━━ SCORING ━━━
+function score(p,o){let s=0,r=[];const es=p.email_status;
+  if(es==="verified"){s+=30;r.push("Verified +30")}else if(es==="likely to engage"){s+=20;r.push("Likely +20")}else if(p.email){s+=10;r.push("Email +10")}
+  const sn=p.seniority||"";const sm={founder:25,owner:25,c_suite:22,vp:18,director:14,manager:8,senior:4};if(sm[sn]){s+=sm[sn];r.push(sn+" +"+sm[sn])}
+  const e=o?.estimated_num_employees||0;if(e>=50&&e<=500)s+=15;else if(e>500&&e<=2000)s+=12;else if(e>2000)s+=8;else if(e>=20)s+=10;else s+=3;
+  const rv=o?.organization_revenue||0;if(rv>=1e6&&rv<=1e8)s+=15;else if(rv>1e8)s+=10;else if(rv>0)s+=5;
+  const g=o?.organization_headcount_twelve_month_growth||0;if(g>.2)s+=10;else if(g>.05)s+=6;else if(g>0)s+=3;
+  if(p.linkedin_url)s+=5;const sc=Math.min(s,100);return{score:sc,reasons:r,grade:sc>=80?"A":sc>=60?"B":sc>=40?"C":"D"}}
 
+function detectMkt(p,o){const l=[p.country,p.city,p.state,o?.country,o?.city].filter(Boolean).join(" ").toLowerCase();
+  if(/india|mumbai|bengaluru|bangalore|hyderabad|chennai|pune|delhi|noida|gurugram/.test(l))return"India";
+  if(/saudi|uae|emirates|dubai|abu dhabi|riyadh|qatar|bahrain|kuwait|oman|egypt|jordan/.test(l))return"Gulf";
+  if(/australia|new zealand|singapore|malaysia|indonesia|vietnam|thailand|philippines/.test(l))return"ANZ/SEA";
+  if(/united states|canada|united kingdom|london|germany|france/.test(l))return"US/UK/EU";return"Other"}
+
+// ━━━ CSV EXPORT ━━━
+function exportCSV(leads){
+  const ch={"India":"Email + LinkedIn simultaneous","Gulf":"LinkedIn FIRST then email 2-3 days later","ANZ/SEA":"Email + LinkedIn + Loom mandatory","US/UK/EU":"Email + LinkedIn + Loom","Other":"Email + LinkedIn"};
+  const mkts={};leads.forEach(l=>{const m=l._market||"Other";if(!mkts[m])mkts[m]=[];mkts[m].push(l)});
+  const esc=v=>`"${String(v||"").replace(/"/g,'""')}"`;
+  let csv="First Name,Last Name,Title,Company Name,Email,Email Status,LinkedIn,Market,Outreach Channel,Score,Grade\n";
+  ["India","Gulf","ANZ/SEA","US/UK/EU","Other"].forEach(m=>{const ml=mkts[m];if(!ml?.length)return;
+    ml.sort((a,b)=>(b._scoreData?.score||0)-(a._scoreData?.score||0));
+    csv+=`\n--- ${m.toUpperCase()} (${ml.length} leads) ---,,,,,,,,${ch[m]||""},,\n\n`;
+    ml.forEach(l=>{csv+=[esc(l.first_name),esc(l.last_name),esc(l.title),esc(l._companyName),esc(l.email),esc(l.email_status),esc(l.linkedin_url),esc(l._market),esc(ch[l._market]||""),l._scoreData?.score||0,esc(l._scoreData?.grade||"D")].join(",")+"\n"})});
+  const b=new Blob([csv],{type:"text/csv"});const u=URL.createObjectURL(b);const a=document.createElement("a");
+  a.href=u;a.download=`Voxelised-Leads-${new Date().toISOString().split("T")[0]}.csv`;a.click();URL.revokeObjectURL(u)}
+
+// ━━━ CSV PARSER ━━━
+function parseCSV(text){
+  const lines=text.split("\n").map(l=>l.trim()).filter(Boolean);if(lines.length<2)return[];
+  function pl(line){const r=[];let c="",q=false;for(let i=0;i<line.length;i++){const ch=line[i];if(ch==='"')q=!q;else if(ch===","&&!q){r.push(c.trim());c=""}else c+=ch}r.push(c.trim());return r}
+  const hdrs=pl(lines[0]).map(h=>h.toLowerCase().trim());
+  const rows=[];
+  for(let i=1;i<lines.length;i++){
+    const line=lines[i];if(line.startsWith("---")||line.startsWith('"---'))continue;
+    const vals=pl(line);if(vals.every(v=>!v))continue;
+    const obj={};hdrs.forEach((h,idx)=>{obj[h]=vals[idx]||""});rows.push(obj)}
+  return rows}
+
+// ━━━ GET CSV FIELD (flexible column matching) ━━━
+function getField(row, ...names){
+  for(const n of names){if(row[n]&&row[n].trim())return row[n].trim()}
+  // Also try partial match on keys
+  const keys=Object.keys(row);
+  for(const n of names){const found=keys.find(k=>k.includes(n));if(found&&row[found]&&row[found].trim())return row[found].trim()}
+  return""}
+
+// ━━━ COMPONENTS ━━━
+function FF({label,value,onChange,placeholder,multiline}){return(<div style={{marginBottom:"0.9rem"}}><label className="lbl">{label}</label>{multiline?<textarea className="inp" value={value} onChange={e=>onChange(e.target.value)} placeholder={placeholder} rows={3}/>:<input className="inp" value={value} onChange={e=>onChange(e.target.value)} placeholder={placeholder}/>}</div>)}
+function SC({label,value,color}){return(<div style={{padding:"0.8rem 1.2rem",background:"var(--bg1)",borderRadius:8,border:"1px solid var(--bg3)",minWidth:75,flex:"1 1 75px"}}><div style={{fontSize:"1.5rem",fontWeight:800,color,lineHeight:1}}>{value}</div><div style={{fontSize:"0.6rem",letterSpacing:"0.15em",textTransform:"uppercase",color:"var(--fg4)",marginTop:4}}>{label}</div></div>)}
+function GB({grade,score}){const c={A:"#00ff88",B:"#88ff00",C:"#ffaa00",D:"#ff4444"}[grade]||"#666";return(<span style={{display:"inline-flex",alignItems:"center",gap:5}}><span style={{width:22,height:22,borderRadius:"50%",background:c+"18",color:c,display:"inline-flex",alignItems:"center",justifyContent:"center",fontSize:"0.7rem",fontWeight:700}}>{grade}</span><span style={{color:"var(--fg3)",fontSize:"0.75rem",fontFamily:"var(--mono)"}}>{score}</span></span>)}
+function LT({leads}){const sorted=[...leads].sort((a,b)=>(b._scoreData?.score||0)-(a._scoreData?.score||0));
+  return(<div style={{overflowX:"auto"}}><table style={{width:"100%",borderCollapse:"collapse"}}><thead><tr style={{borderBottom:"1px solid var(--bg3)"}}>
+    {["#","Score","Name","Title","Company","Email","Mkt"].map(h=><th key={h} style={{padding:"0.6rem 0.7rem",textAlign:"left",fontSize:"0.6rem",letterSpacing:"0.12em",textTransform:"uppercase",color:"var(--fg4)",fontWeight:500,whiteSpace:"nowrap"}}>{h}</th>)}
+  </tr></thead><tbody>{sorted.map((l,i)=><tr key={l.id||i} style={{borderBottom:"1px solid var(--bg1)"}} title={l._scoreData?.reasons?.join(" | ")}>
+    <td style={{padding:"0.55rem 0.7rem",color:"var(--fg4)",fontSize:"0.75rem",fontFamily:"var(--mono)"}}>{i+1}</td>
+    <td style={{padding:"0.55rem 0.7rem"}}>{l._scoreData?<GB grade={l._scoreData.grade} score={l._scoreData.score}/>:"—"}</td>
+    <td style={{padding:"0.55rem 0.7rem",fontWeight:600,whiteSpace:"nowrap"}}>{l.first_name} {l.last_name}{l.linkedin_url&&<a href={l.linkedin_url} target="_blank" rel="noopener noreferrer" style={{marginLeft:5,color:"#0a66c2",fontSize:"0.65rem",textDecoration:"none",opacity:.7}}>↗</a>}</td>
+    <td style={{padding:"0.55rem 0.7rem",color:"var(--fg2)",maxWidth:180,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",fontSize:"0.82rem"}}>{l.title}</td>
+    <td style={{padding:"0.55rem 0.7rem",color:"var(--fg3)",fontSize:"0.82rem",whiteSpace:"nowrap"}}>{l._companyName||""}</td>
+    <td style={{padding:"0.55rem 0.7rem",fontFamily:"var(--mono)",fontSize:"0.72rem"}}>{l.email?<span style={{color:l.email_status==="verified"?"var(--ac)":"var(--warn)"}}>{l.email}</span>:<span style={{color:"var(--fg4)"}}>—</span>}</td>
+    <td style={{padding:"0.55rem 0.7rem"}}><span style={{padding:"1px 7px",background:"var(--bg2)",borderRadius:3,fontSize:"0.65rem",color:"var(--fg3)",whiteSpace:"nowrap"}}>{l._market||"—"}</span></td>
+  </tr>)}</tbody></table></div>)}
+
+// ━━━ MAIN APP ━━━
 function App(){
   const[apiKey,setApiKey]=useState("");const[keySet,setKeySet]=useState(false);const[mode,setMode]=useState("search");
   const[filters,setFilters]=useState({titles:"CEO, CTO, Co-Founder, VP Marketing, VP Sales, COO, Founder",seniorities:"founder, c_suite, vp, director",locations:"",orgLocations:"",domains:"",empMin:"50",empMax:"2000",technologies:"",keywords:"",emailStatus:"verified, likely to engage",pages:"3",marketLabel:"India"});
   const[searchResults,setSearchResults]=useState([]);const[enrichedLeads,setEnrichedLeads]=useState([]);
-  const[csvRows,setCsvRows]=useState([]);const[csvFilename,setCsvFilename]=useState("");const[uploadEnriched,setUploadEnriched]=useState([]);
+  const[csvRows,setCsvRows]=useState([]);const[csvFn,setCsvFn]=useState("");const[uploadEnriched,setUploadEnriched]=useState([]);
   const[status,setStatus]=useState("");const[phase,setPhase]=useState("idle");const[progress,setProgress]=useState({current:0,total:0});const[creditsUsed,setCreditsUsed]=useState(0);
   const abortRef=useRef(false);const fileRef=useRef(null);
-  const setF=(k,v)=>setFilters(p=>({...p,[k]:v}));const pl=s=>s.split(",").map(x=>x.trim()).filter(Boolean);
+  const setF=(k,v)=>setFilters(p=>({...p,[k]:v}));const plist=s=>s.split(",").map(x=>x.trim()).filter(Boolean);
 
-  const handleSearch=async()=>{if(!apiKey)return;abortRef.current=false;setPhase("searching");setSearchResults([]);setEnrichedLeads([]);const tp=parseInt(filters.pages)||3;let all=[];
-    try{for(let p=1;p<=tp;p++){if(abortRef.current)break;setStatus(`Searching page ${p}/${tp}...`);const body={page:p,per_page:100};const t=pl(filters.titles);if(t.length)body.person_titles=t;const s=pl(filters.seniorities);if(s.length)body.person_seniorities=s;const plc=pl(filters.locations);if(plc.length)body.person_locations=plc;const ol=pl(filters.orgLocations);if(ol.length)body.organization_locations=ol;const d=pl(filters.domains);if(d.length)body.q_organization_domains_list=d;if(filters.empMin||filters.empMax)body.organization_num_employees_ranges=[`${filters.empMin||"1"},${filters.empMax||"10000"}`];const te=pl(filters.technologies);if(te.length)body.currently_using_any_of_technology_uids=te;if(filters.keywords)body.q_keywords=filters.keywords;const es=pl(filters.emailStatus);if(es.length)body.contact_email_status=es;const data=await apiSearch(apiKey,body);const people=data.people||[];if(!people.length)break;all=[...all,...people];setSearchResults([...all]);if(p<tp)await new Promise(r=>setTimeout(r,1200))}setStatus(`Found ${all.length} leads. Hit ENRICH.`);setPhase("idle")}catch(e){setStatus("Search error: "+e.message);setPhase("idle")}};
+  // ── API helpers ──
+  const apiPost=async(endpoint,body)=>{const r=await fetch(`${API}/api/${endpoint}`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});const d=await r.json();if(!r.ok)throw new Error(d.error||JSON.stringify(d).slice(0,200));return d};
 
-  const doEnrich=async(items,setResults,marketOverride)=>{abortRef.current=false;setPhase("enriching");setResults([]);const batches=[];for(let i=0;i<items.length;i+=10)batches.push(items.slice(i,i+10));setProgress({current:0,total:items.length});let all=[];let cr=0;
-    for(let i=0;i<batches.length;i++){if(abortRef.current){setStatus(`Stopped. ${all.length} enriched.`);break}setStatus(`Enriching batch ${i+1}/${batches.length} — ${cr} credits`);
-      try{const data=await apiEnrich(apiKey,batches[i]);cr+=data.credits_consumed||batches[i].length;setCreditsUsed(c=>c+(data.credits_consumed||batches[i].length));
-        (data.matches||[]).forEach((m,mi)=>{if(!m)return;const o=m.organization||{};const orig=batches[i][mi]||{};m._market=orig._origMarket||marketOverride||detectMarket(m,o);m._companyName=o.name||m.employment_history?.[0]?.organization_name||orig.organization_name||"";m._scoreData=scoreLead(m,o)});
-        all=[...all,...(data.matches||[]).filter(Boolean)];setResults([...all]);setProgress({current:all.length,total:items.length})}
+  // ── SEARCH (Tab 1) ──
+  const handleSearch=async()=>{if(!apiKey)return;abortRef.current=false;setPhase("searching");setSearchResults([]);setEnrichedLeads([]);
+    const tp=parseInt(filters.pages)||3;let all=[];
+    try{for(let p=1;p<=tp;p++){if(abortRef.current)break;setStatus(`Searching page ${p}/${tp}...`);
+      const body={page:p,per_page:100};
+      const t=plist(filters.titles);if(t.length)body.person_titles=t;
+      const s=plist(filters.seniorities);if(s.length)body.person_seniorities=s;
+      const pl=plist(filters.locations);if(pl.length)body.person_locations=pl;
+      const ol=plist(filters.orgLocations);if(ol.length)body.organization_locations=ol;
+      const d=plist(filters.domains);if(d.length)body.q_organization_domains_list=d;
+      if(filters.empMin||filters.empMax)body.organization_num_employees_ranges=[`${filters.empMin||"1"},${filters.empMax||"10000"}`];
+      const te=plist(filters.technologies);if(te.length)body.currently_using_any_of_technology_uids=te;
+      if(filters.keywords)body.q_keywords=filters.keywords;
+      const es=plist(filters.emailStatus);if(es.length)body.contact_email_status=es;
+      const data=await apiPost("search",{apiKey,...body});
+      const people=data.people||[];if(!people.length)break;
+      all=[...all,...people];setSearchResults([...all]);
+      if(p<tp)await new Promise(r=>setTimeout(r,1200))}
+      setStatus(`Found ${all.length} leads. Hit ENRICH to get emails & scores.`);setPhase("idle")}
+    catch(e){setStatus(`Search error: ${e.message}`);setPhase("idle")}};
+
+  // ── ENRICH by IDs (Tab 1) ──
+  const handleEnrichSearch=async()=>{if(!searchResults.length)return;abortRef.current=false;setPhase("enriching");setEnrichedLeads([]);
+    const ids=searchResults.map(p=>p.id).filter(Boolean);
+    const batches=[];for(let i=0;i<ids.length;i+=10)batches.push(ids.slice(i,i+10));
+    setProgress({current:0,total:ids.length});let all=[];let cr=0;
+    for(let i=0;i<batches.length;i++){if(abortRef.current){setStatus(`Stopped. ${all.length} enriched.`);break}
+      setStatus(`Enriching batch ${i+1}/${batches.length} — ${cr} credits`);
+      try{const data=await apiPost("enrich",{apiKey,details:batches[i].map(id=>({id}))});
+        cr+=data.credits_consumed||batches[i].length;setCreditsUsed(c=>c+(data.credits_consumed||0));
+        (data.matches||[]).forEach(m=>{if(!m)return;const o=m.organization||{};m._market=filters.marketLabel||detectMkt(m,o);m._companyName=o.name||m.employment_history?.[0]?.organization_name||"";m._scoreData=score(m,o)});
+        all=[...all,...(data.matches||[]).filter(Boolean)];setEnrichedLeads([...all]);setProgress({current:all.length,total:ids.length})}
       catch(e){setStatus(`Batch ${i+1} error: ${e.message}. Retrying...`);await new Promise(r=>setTimeout(r,3000));i--;continue}
       if(i<batches.length-1)await new Promise(r=>setTimeout(r,1500))}
     setStatus(`Done! ${all.length} enriched. ${cr} credits.`);setPhase("done")};
 
-  const handleEnrichSearch=()=>{if(!searchResults.length)return;const ids=searchResults.map(p=>({id:p.id})).filter(d=>d.id);doEnrich(ids,setEnrichedLeads,filters.marketLabel)};
+  // ── CSV FILE UPLOAD ──
+  const handleFile=(file)=>{if(!file)return;setCsvFn(file.name);const reader=new FileReader();
+    reader.onload=(e)=>{const rows=parseCSV(e.target.result);setCsvRows(rows);setUploadEnriched([]);setStatus(`Loaded ${rows.length} leads from ${file.name}.`)};reader.readAsText(file)};
+  const handleDrop=useCallback(e=>{e.preventDefault();e.stopPropagation();e.currentTarget.classList.remove("over");const f=e.dataTransfer?.files?.[0];if(f&&f.name.endsWith(".csv"))handleFile(f)},[]);
 
-  const handleFileUpload=(file)=>{if(!file)return;setCsvFilename(file.name);const reader=new FileReader();reader.onload=(e)=>{const rows=parseCSV(e.target.result);setCsvRows(rows);setUploadEnriched([]);setStatus(`Loaded ${rows.length} leads from ${file.name}.`)};reader.readAsText(file)};
-  const handleDrop=useCallback((e)=>{e.preventDefault();e.stopPropagation();e.currentTarget.classList.remove("dragover");const f=e.dataTransfer?.files?.[0];if(f&&f.name.endsWith(".csv"))handleFileUpload(f)},[]);
+  // ── CSV ENRICH (Tab 2) — Search by domain, match by name, then enrich by ID ──
+  const handleEnrichCSV=async()=>{if(!csvRows.length||!apiKey)return;abortRef.current=false;setPhase("enriching");setUploadEnriched([]);
+    
+    // Step 1: Group CSV rows by domain
+    const byDomain={};
+    csvRows.forEach((row,idx)=>{
+      const domain=getField(row,"domain","domain (search in apollo)","company domain","website")||"";
+      const clean=domain.replace(/^https?:\/\//,"").replace(/\/.*/,"").toLowerCase().trim();
+      if(!clean)return;
+      if(!byDomain[clean])byDomain[clean]=[];
+      byDomain[clean].push({
+        firstName:getField(row,"first name","firstname","first_name","name"),
+        title:getField(row,"title","job title"),
+        company:getField(row,"company name","company","organization"),
+        market:getField(row,"market"),
+        domain:clean,
+        _rowIdx:idx
+      })});
 
-  const handleEnrichCSV=()=>{if(!csvRows.length||!apiKey)return;
-    const details=csvRows.map((row,idx)=>{const d={};
-      const fn=row["first name"]||row["firstname"]||row["first_name"]||row["name"]||"";if(fn)d.first_name=fn;
-      const ln=row["last name"]||row["lastname"]||row["last_name"]||"";if(ln)d.last_name=ln;
-      const dom=row["domain"]||row["domain search in apollo"]||row["website"]||row["company domain"]||"";if(dom)d.domain=dom.replace(/^https?:\/\//,"").replace(/\/.*/,"");
-      const org=row["company name"]||row["company"]||row["organization"]||"";if(org)d.organization_name=org;
-      const em=row["email"]||"";if(em&&em.includes("@"))d.email=em;
-      const li=row["linkedin"]||row["linkedin url"]||row["linkedin_url"]||"";if(li&&li.includes("linkedin"))d.linkedin_url=li;
-      const aid=row["apollo id"]||row["apollo_id"]||"";if(aid&&aid.length>10&&/^[a-f0-9]+$/.test(aid))d.id=aid;
-      d._origMarket=row["market"]||"";return d}).filter(d=>d.first_name||d.domain||d.email||d.id||d.linkedin_url);
-    doEnrich(details,setUploadEnriched,"")};
+    const domains=Object.keys(byDomain);
+    const totalRows=csvRows.length;
+    setProgress({current:0,total:totalRows});
+    let allFound=[];let searchCount=0;
+
+    // Step 2: Search each domain to find person IDs
+    setStatus(`Step 1/2: Searching ${domains.length} domains to find people...`);
+    for(let i=0;i<domains.length;i++){
+      if(abortRef.current)break;
+      const dom=domains[i];const targets=byDomain[dom];
+      setStatus(`Step 1/2: Searching ${dom} (${i+1}/${domains.length})...`);
+
+      try{
+        // Get all people at this domain
+        const data=await apiPost("search-domain",{apiKey,domain:dom});
+        const people=data.people||[];searchCount++;
+        
+        if(people.length===0){setProgress(p=>({...p,current:p.current+targets.length}));continue}
+
+        // Match each target to a found person
+        targets.forEach(target=>{
+          const fn=target.firstName.toLowerCase();
+          // Try exact first name match first
+          let match=people.find(p=>(p.first_name||"").toLowerCase()===fn);
+          // Fallback: fuzzy match on first name + title keywords
+          if(!match&&target.title){
+            const titleWords=target.title.toLowerCase().split(/[\s,&]+/).filter(w=>w.length>2);
+            match=people.find(p=>{
+              const pfn=(p.first_name||"").toLowerCase();
+              const ptitle=(p.title||"").toLowerCase();
+              return pfn===fn||
+                (pfn.startsWith(fn)&&titleWords.some(tw=>ptitle.includes(tw)))||
+                (fn.startsWith(pfn)&&titleWords.some(tw=>ptitle.includes(tw)))
+            })}
+          if(match){allFound.push({id:match.id,_market:target.market,_domain:target.domain})}
+        });
+        setProgress(p=>({...p,current:Math.min(p.current+targets.length,totalRows)}));
+      }catch(e){
+        setStatus(`Search ${dom} failed: ${e.message}. Skipping...`);
+        setProgress(p=>({...p,current:p.current+targets.length}))}
+
+      // Rate limit between domain searches
+      if(i<domains.length-1)await new Promise(r=>setTimeout(r,800))}
+
+    if(abortRef.current){setStatus(`Stopped after searching ${searchCount} domains. Found ${allFound.length} matches.`);setPhase("idle");return}
+    if(allFound.length===0){setStatus(`No matches found across ${domains.length} domains. Check that names/domains match Apollo's database.`);setPhase("idle");return}
+
+    // Step 3: Bulk enrich all found IDs
+    setStatus(`Step 2/2: Enriching ${allFound.length} matched leads...`);
+    const batches=[];for(let i=0;i<allFound.length;i+=10)batches.push(allFound.slice(i,i+10));
+    setProgress({current:0,total:allFound.length});
+    let allEnriched=[];let cr=0;
+
+    for(let i=0;i<batches.length;i++){
+      if(abortRef.current){setStatus(`Stopped. ${allEnriched.length} enriched.`);break}
+      setStatus(`Step 2/2: Enriching batch ${i+1}/${batches.length} — ${cr} credits`);
+      try{
+        const data=await apiPost("enrich",{apiKey,details:batches[i].map(f=>({id:f.id}))});
+        cr+=data.credits_consumed||batches[i].length;setCreditsUsed(c=>c+(data.credits_consumed||0));
+        (data.matches||[]).forEach((m,mi)=>{if(!m)return;const o=m.organization||{};const orig=batches[i][mi]||{};
+          m._market=orig._market||detectMkt(m,o);m._companyName=o.name||m.employment_history?.[0]?.organization_name||"";m._scoreData=score(m,o)});
+        allEnriched=[...allEnriched,...(data.matches||[]).filter(Boolean)];setUploadEnriched([...allEnriched]);
+        setProgress({current:allEnriched.length,total:allFound.length})}
+      catch(e){setStatus(`Enrich batch ${i+1} error: ${e.message}. Retrying...`);await new Promise(r=>setTimeout(r,3000));i--;continue}
+      if(i<batches.length-1)await new Promise(r=>setTimeout(r,1500))}
+
+    setStatus(`Done! Found ${allFound.length}/${totalRows} in Apollo. Enriched ${allEnriched.length}. ${cr} credits used.`);setPhase("done")};
 
   const activeLeads=mode==="upload"?uploadEnriched:(enrichedLeads.length?enrichedLeads:searchResults);
-  const stats=activeLeads.length&&activeLeads[0]?._scoreData?{total:activeLeads.length,em:activeLeads.filter(l=>l.email).length,ver:activeLeads.filter(l=>l.email_status==="verified").length,avg:Math.round(activeLeads.reduce((s,l)=>s+(l._scoreData?.score||0),0)/activeLeads.length),a:activeLeads.filter(l=>l._scoreData?.grade==="A").length,b:activeLeads.filter(l=>l._scoreData?.grade==="B").length}:null;
+  const st=activeLeads.length&&activeLeads[0]?._scoreData?{t:activeLeads.length,em:activeLeads.filter(l=>l.email).length,v:activeLeads.filter(l=>l.email_status==="verified").length,avg:Math.round(activeLeads.reduce((s,l)=>s+(l._scoreData?.score||0),0)/activeLeads.length),a:activeLeads.filter(l=>l._scoreData?.grade==="A").length,b:activeLeads.filter(l=>l._scoreData?.grade==="B").length}:null;
 
-  if(!keySet)return(<div style={{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",padding:24}}><div style={{maxWidth:440,width:"100%"}}><div style={{marginBottom:48}}><div style={{fontSize:"0.7rem",letterSpacing:"0.3em",textTransform:"uppercase",color:"var(--fg-4)",marginBottom:6}}>Voxelised</div><h1 style={{fontSize:"2.4rem",fontWeight:800,lineHeight:1,margin:"0 0 12px 0"}}>Lead Engine</h1><p style={{color:"var(--fg-3)",fontSize:"0.9rem",lineHeight:1.5}}>Search + Enrich from Apollo, or upload a CSV to enrich existing leads. Score, grade, and export.</p></div><div style={{marginBottom:20}}><label className="label">Apollo API Key</label><input type="password" value={apiKey} onChange={e=>setApiKey(e.target.value)} className="input" placeholder="Paste your Apollo.io API key" onKeyDown={e=>e.key==="Enter"&&apiKey&&setKeySet(true)} style={{padding:"0.9rem 1rem",fontSize:"0.9rem"}}/></div><button className="btn btn-primary" style={{width:"100%",padding:"0.85rem"}} onClick={()=>apiKey&&setKeySet(true)} disabled={!apiKey}>CONNECT →</button><p style={{color:"var(--fg-4)",fontSize:"0.7rem",marginTop:14,textAlign:"center"}}>Key stays in browser. Only sent to your Vercel proxy → Apollo API.</p></div></div>);
+  // ── KEY SCREEN ──
+  if(!keySet)return(
+    <div style={{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",padding:24}}>
+      <div style={{maxWidth:440,width:"100%"}}>
+        <div style={{marginBottom:48}}>
+          <div style={{fontSize:".7rem",letterSpacing:".3em",textTransform:"uppercase",color:"var(--fg4)",marginBottom:6}}>Voxelised</div>
+          <h1 style={{fontSize:"2.4rem",fontWeight:800,lineHeight:1,margin:"0 0 12px 0"}}>Lead Engine</h1>
+          <p style={{color:"var(--fg3)",fontSize:".9rem",lineHeight:1.5}}>Search + Enrich from Apollo, or upload a CSV to enrich. Score, grade, and export.</p>
+        </div>
+        <div style={{marginBottom:20}}><label className="lbl">Apollo API Key</label>
+          <input type="password" value={apiKey} onChange={e=>setApiKey(e.target.value)} className="inp" placeholder="Paste your Apollo.io API key" onKeyDown={e=>e.key==="Enter"&&apiKey&&setKeySet(true)} style={{padding:".9rem 1rem",fontSize:".9rem"}}/>
+        </div>
+        <button style={{width:"100%",padding:".85rem",background:apiKey?"var(--fg)":"var(--bg3)",color:apiKey?"var(--bg)":"var(--fg4)",border:"none",borderRadius:5,fontSize:".85rem",fontWeight:600,cursor:apiKey?"pointer":"default",letterSpacing:".08em"}} onClick={()=>apiKey&&setKeySet(true)} disabled={!apiKey}>CONNECT →</button>
+        <p style={{color:"var(--fg4)",fontSize:".7rem",marginTop:14,textAlign:"center"}}>Key stays in browser. Sent only to your Vercel proxy → Apollo API.</p>
+      </div>
+    </div>);
 
-  return(<div style={{minHeight:"100vh",display:"flex",flexDirection:"column"}}>
-    <header style={{borderBottom:"1px solid var(--bg-2)",padding:"0.6rem 1.5rem",display:"flex",justifyContent:"space-between",alignItems:"center",flexShrink:0}}>
-      <div style={{display:"flex",alignItems:"center",gap:14}}><span style={{fontSize:"0.65rem",letterSpacing:"0.25em",textTransform:"uppercase",color:"var(--fg-4)"}}>Voxelised</span><span style={{fontSize:"1.1rem",fontWeight:700}}>Lead Engine</span>{creditsUsed>0&&<span style={{fontSize:"0.7rem",color:"var(--warn)",fontFamily:"var(--mono)",background:"#1a1100",padding:"2px 8px",borderRadius:3}}>{creditsUsed} credits</span>}</div>
-      <div style={{display:"flex",alignItems:"center",gap:10}}><div style={{width:7,height:7,borderRadius:"50%",background:"var(--accent)"}}/><span style={{fontSize:"0.75rem",color:"var(--fg-3)"}}>Connected</span><button onClick={()=>{setKeySet(false);setApiKey("")}} style={{background:"none",border:"1px solid var(--bg-3)",color:"var(--fg-4)",padding:"3px 10px",borderRadius:4,fontSize:"0.65rem",cursor:"pointer"}}>Disconnect</button></div>
-    </header>
-    <div style={{borderBottom:"1px solid var(--bg-2)",padding:"0 1.5rem",display:"flex",gap:4}}>
-      <button className={`tab ${mode==="search"?"active":""}`} onClick={()=>setMode("search")}>⚡ Search + Enrich</button>
-      <button className={`tab ${mode==="upload"?"active":""}`} onClick={()=>setMode("upload")}>📄 Upload CSV + Enrich</button>
-    </div>
-    <div style={{display:"flex",flex:1,overflow:"hidden"}}>
-      <aside style={{width:340,borderRight:"1px solid var(--bg-2)",padding:"1.2rem",overflowY:"auto",flexShrink:0}}>
-        {mode==="search"?<>
-          <div className="label" style={{marginBottom:16,fontSize:"0.65rem"}}>Search Filters</div>
-          <FF label="Job Titles" value={filters.titles} onChange={v=>setF("titles",v)} placeholder="CEO, CTO, VP Marketing"/>
-          <FF label="Seniorities" value={filters.seniorities} onChange={v=>setF("seniorities",v)} placeholder="founder, c_suite, vp"/>
-          <FF label="Person Locations" value={filters.locations} onChange={v=>setF("locations",v)} placeholder="India, Singapore"/>
-          <FF label="Org HQ Locations" value={filters.orgLocations} onChange={v=>setF("orgLocations",v)} placeholder="San Francisco, CA"/>
-          <FF label="Company Domains" value={filters.domains} onChange={v=>setF("domains",v)} placeholder="hevodata.com, moengage.com" multiline/>
-          <FF label="Technologies" value={filters.technologies} onChange={v=>setF("technologies",v)} placeholder="hubspot, salesforce"/>
-          <FF label="Keywords" value={filters.keywords} onChange={v=>setF("keywords",v)} placeholder="SaaS, fintech"/>
-          <FF label="Email Status" value={filters.emailStatus} onChange={v=>setF("emailStatus",v)} placeholder="verified, likely to engage"/>
-          <div style={{display:"flex",gap:10,marginBottom:"0.9rem"}}><div style={{flex:1}}><label className="label">Emp Min</label><input className="input" value={filters.empMin} onChange={e=>setF("empMin",e.target.value)}/></div><div style={{flex:1}}><label className="label">Emp Max</label><input className="input" value={filters.empMax} onChange={e=>setF("empMax",e.target.value)}/></div></div>
-          <div style={{display:"flex",gap:10,marginBottom:"0.9rem"}}><div style={{flex:1}}><label className="label">Pages</label><input className="input" value={filters.pages} onChange={e=>setF("pages",e.target.value)}/></div><div style={{flex:1}}><label className="label">Market</label><select className="input" value={filters.marketLabel} onChange={e=>setF("marketLabel",e.target.value)}><option value="India">India</option><option value="Gulf">Gulf</option><option value="ANZ/SEA">ANZ/SEA</option><option value="US/UK/EU">US/UK/EU</option><option value="">Auto-detect</option></select></div></div>
-          <div style={{display:"flex",gap:8,marginTop:20}}><button className="btn btn-primary" style={{flex:1}} onClick={handleSearch} disabled={phase==="searching"||phase==="enriching"}>{phase==="searching"?<span className="pulse">SEARCHING...</span>:"① SEARCH"}</button><button className={`btn ${searchResults.length?"btn-accent":""}`} style={{flex:1,...(searchResults.length?{}:{background:"var(--bg-3)",color:"var(--fg-4)"})}} onClick={handleEnrichSearch} disabled={!searchResults.length||phase==="enriching"}>{phase==="enriching"&&mode==="search"?<span className="pulse">ENRICHING...</span>:"② ENRICH"}</button></div>
-        </>:<>
-          <div className="label" style={{marginBottom:16,fontSize:"0.65rem"}}>Upload Unenriched CSV</div>
-          <div className="drop-zone" onDrop={handleDrop} onDragOver={e=>{e.preventDefault();e.currentTarget.classList.add("dragover")}} onDragLeave={e=>e.currentTarget.classList.remove("dragover")} onClick={()=>fileRef.current?.click()}>
-            <input ref={fileRef} type="file" accept=".csv" style={{display:"none"}} onChange={e=>handleFileUpload(e.target.files?.[0])}/>
-            {csvRows.length>0?<div><div style={{fontSize:"0.85rem",fontWeight:600,marginBottom:4}}>{csvFilename}</div><div style={{fontSize:"0.75rem",color:"var(--accent)"}}>{csvRows.length} leads loaded</div><div style={{fontSize:"0.65rem",color:"var(--fg-4)",marginTop:8}}>Drop new file or click to replace</div></div>
-            :<div><div style={{fontSize:28,marginBottom:8,opacity:.3}}>📄</div><div style={{fontSize:"0.85rem",color:"var(--fg-3)"}}>Drop CSV here or click to browse</div><div style={{fontSize:"0.7rem",color:"var(--fg-4)",marginTop:8,lineHeight:1.5}}>Columns: First Name, Title, Company Name, Domain, Apollo ID, Email, LinkedIn, Market</div></div>}
-          </div>
-          {csvRows.length>0&&<div style={{marginTop:16}}>
-            <div className="label" style={{marginBottom:8}}>Preview ({csvRows.length} rows)</div>
-            <div style={{background:"var(--bg-1)",borderRadius:6,padding:10,border:"1px solid var(--bg-3)",maxHeight:200,overflowY:"auto"}}>
-              {csvRows.slice(0,5).map((row,i)=><div key={i} style={{fontSize:"0.72rem",color:"var(--fg-2)",padding:"4px 0",borderBottom:"1px solid var(--bg-3)",fontFamily:"var(--mono)"}}>{row["first name"]||row["firstname"]||row["name"]||"?"} — {row["company name"]||row["company"]||"?"} — {row["domain"]||row["domain search in apollo"]||"?"}</div>)}
-              {csvRows.length>5&&<div style={{fontSize:"0.65rem",color:"var(--fg-4)",paddingTop:4}}>...and {csvRows.length-5} more</div>}
+  // ── MAIN ──
+  return(
+    <div style={{minHeight:"100vh",display:"flex",flexDirection:"column"}}>
+      <header style={{borderBottom:"1px solid var(--bg2)",padding:".6rem 1.5rem",display:"flex",justifyContent:"space-between",alignItems:"center",flexShrink:0}}>
+        <div style={{display:"flex",alignItems:"center",gap:14}}>
+          <span style={{fontSize:".65rem",letterSpacing:".25em",textTransform:"uppercase",color:"var(--fg4)"}}>Voxelised</span>
+          <span style={{fontSize:"1.1rem",fontWeight:700}}>Lead Engine</span>
+          {creditsUsed>0&&<span style={{fontSize:".7rem",color:"var(--warn)",fontFamily:"var(--mono)",background:"#1a1100",padding:"2px 8px",borderRadius:3}}>{creditsUsed} credits</span>}
+        </div>
+        <div style={{display:"flex",alignItems:"center",gap:10}}>
+          <div style={{width:7,height:7,borderRadius:"50%",background:"var(--ac)"}}/>
+          <span style={{fontSize:".75rem",color:"var(--fg3)"}}>Connected</span>
+          <button onClick={()=>{setKeySet(false);setApiKey("")}} style={{background:"none",border:"1px solid var(--bg3)",color:"var(--fg4)",padding:"3px 10px",borderRadius:4,fontSize:".65rem",cursor:"pointer"}}>Disconnect</button>
+        </div>
+      </header>
+
+      <div style={{borderBottom:"1px solid var(--bg2)",padding:"0 1.5rem",display:"flex",gap:4}}>
+        <button className={`tab ${mode==="search"?"active":""}`} onClick={()=>setMode("search")}>⚡ Search + Enrich</button>
+        <button className={`tab ${mode==="upload"?"active":""}`} onClick={()=>setMode("upload")}>📄 Upload CSV + Enrich</button>
+      </div>
+
+      <div style={{display:"flex",flex:1,overflow:"hidden"}}>
+        {/* LEFT PANEL */}
+        <aside style={{width:340,borderRight:"1px solid var(--bg2)",padding:"1.2rem",overflowY:"auto",flexShrink:0}}>
+          {mode==="search"?<>
+            <div className="lbl" style={{marginBottom:16,fontSize:".65rem"}}>Search Filters</div>
+            <FF label="Job Titles" value={filters.titles} onChange={v=>setF("titles",v)} placeholder="CEO, CTO, VP Marketing"/>
+            <FF label="Seniorities" value={filters.seniorities} onChange={v=>setF("seniorities",v)} placeholder="founder, c_suite, vp"/>
+            <FF label="Person Locations" value={filters.locations} onChange={v=>setF("locations",v)} placeholder="India, Singapore"/>
+            <FF label="Org HQ Locations" value={filters.orgLocations} onChange={v=>setF("orgLocations",v)} placeholder="San Francisco, CA"/>
+            <FF label="Company Domains" value={filters.domains} onChange={v=>setF("domains",v)} placeholder="hevodata.com, moengage.com" multiline/>
+            <FF label="Technologies" value={filters.technologies} onChange={v=>setF("technologies",v)} placeholder="hubspot, salesforce"/>
+            <FF label="Keywords" value={filters.keywords} onChange={v=>setF("keywords",v)} placeholder="SaaS, fintech"/>
+            <FF label="Email Status" value={filters.emailStatus} onChange={v=>setF("emailStatus",v)} placeholder="verified, likely to engage"/>
+            <div style={{display:"flex",gap:10,marginBottom:".9rem"}}>
+              <div style={{flex:1}}><label className="lbl">Emp Min</label><input className="inp" value={filters.empMin} onChange={e=>setF("empMin",e.target.value)}/></div>
+              <div style={{flex:1}}><label className="lbl">Emp Max</label><input className="inp" value={filters.empMax} onChange={e=>setF("empMax",e.target.value)}/></div>
             </div>
-            <button className="btn btn-accent" style={{width:"100%",marginTop:12}} onClick={handleEnrichCSV} disabled={phase==="enriching"}>{phase==="enriching"&&mode==="upload"?<span className="pulse">ENRICHING CSV...</span>:`ENRICH ${csvRows.length} LEADS`}</button>
+            <div style={{display:"flex",gap:10,marginBottom:".9rem"}}>
+              <div style={{flex:1}}><label className="lbl">Pages</label><input className="inp" value={filters.pages} onChange={e=>setF("pages",e.target.value)}/></div>
+              <div style={{flex:1}}><label className="lbl">Market</label><select className="inp" value={filters.marketLabel} onChange={e=>setF("marketLabel",e.target.value)}><option value="India">India</option><option value="Gulf">Gulf</option><option value="ANZ/SEA">ANZ/SEA</option><option value="US/UK/EU">US/UK/EU</option><option value="">Auto-detect</option></select></div>
+            </div>
+            <div style={{display:"flex",gap:8,marginTop:20}}>
+              <button className="btn" style={{flex:1,background:"var(--fg)",color:"var(--bg)"}} onClick={handleSearch} disabled={phase==="searching"||phase==="enriching"}>{phase==="searching"?<span className="pulse">SEARCHING...</span>:"① SEARCH"}</button>
+              <button className="btn" style={{flex:1,background:searchResults.length?"var(--ac)":"var(--bg3)",color:searchResults.length?"var(--bg)":"var(--fg4)"}} onClick={handleEnrichSearch} disabled={!searchResults.length||phase==="enriching"}>{phase==="enriching"&&mode==="search"?<span className="pulse">ENRICHING...</span>:"② ENRICH"}</button>
+            </div>
+          </>:<>
+            <div className="lbl" style={{marginBottom:16,fontSize:".65rem"}}>Upload Unenriched CSV</div>
+            <div className="dz" onDrop={handleDrop} onDragOver={e=>{e.preventDefault();e.currentTarget.classList.add("over")}} onDragLeave={e=>e.currentTarget.classList.remove("over")} onClick={()=>fileRef.current?.click()}>
+              <input ref={fileRef} type="file" accept=".csv" style={{display:"none"}} onChange={e=>handleFile(e.target.files?.[0])}/>
+              {csvRows.length>0?<div><div style={{fontSize:".85rem",fontWeight:600,marginBottom:4}}>{csvFn}</div><div style={{fontSize:".75rem",color:"var(--ac)"}}>{csvRows.length} leads loaded</div><div style={{fontSize:".65rem",color:"var(--fg4)",marginTop:8}}>Drop new file or click to replace</div></div>
+              :<div><div style={{fontSize:28,marginBottom:8,opacity:.3}}>📄</div><div style={{fontSize:".85rem",color:"var(--fg3)"}}>Drop CSV here or click to browse</div><div style={{fontSize:".7rem",color:"var(--fg4)",marginTop:8,lineHeight:1.5}}>Needs: First Name, Company Name, Domain column</div></div>}
+            </div>
+            {csvRows.length>0&&<div style={{marginTop:16}}>
+              <div className="lbl" style={{marginBottom:8}}>Preview ({csvRows.length} rows)</div>
+              <div style={{background:"var(--bg1)",borderRadius:6,padding:10,border:"1px solid var(--bg3)",maxHeight:200,overflowY:"auto"}}>
+                {csvRows.slice(0,5).map((row,i)=><div key={i} style={{fontSize:".72rem",color:"var(--fg2)",padding:"4px 0",borderBottom:"1px solid var(--bg3)",fontFamily:"var(--mono)"}}>
+                  {getField(row,"first name","firstname","name")} — {getField(row,"company name","company")} — {getField(row,"domain","domain (search in apollo)")}
+                </div>)}
+                {csvRows.length>5&&<div style={{fontSize:".65rem",color:"var(--fg4)",paddingTop:4}}>...and {csvRows.length-5} more</div>}
+              </div>
+              <div style={{marginTop:10,padding:10,background:"var(--bg1)",borderRadius:6,border:"1px solid var(--bg3)"}}>
+                <div style={{fontSize:".7rem",color:"var(--fg3)",lineHeight:1.5}}>
+                  <strong style={{color:"var(--fg2)"}}>How it works:</strong> Searches Apollo for each company domain → matches people by name → enriches matched IDs. Only uses credits for enrichment, not search.
+                </div>
+              </div>
+              <button className="btn" style={{width:"100%",marginTop:12,background:"var(--ac)",color:"var(--bg)"}} onClick={handleEnrichCSV} disabled={phase==="enriching"}>
+                {phase==="enriching"&&mode==="upload"?<span className="pulse">ENRICHING CSV...</span>:`ENRICH ${csvRows.length} LEADS`}
+              </button>
+            </div>}
+          </>}
+
+          {phase==="enriching"&&<button className="btn" style={{width:"100%",marginTop:6,background:"#1a0000",color:"var(--err)",border:"1px solid #330000"}} onClick={()=>{abortRef.current=true}}>STOP</button>}
+          {activeLeads.length>0&&activeLeads[0]?._scoreData&&<button className="btn" style={{width:"100%",marginTop:10,background:"var(--bg1)",color:"var(--ac)",border:"1px solid var(--acd)"}} onClick={()=>exportCSV(activeLeads)}>EXPORT CSV — {activeLeads.length} leads</button>}
+
+          {status&&<div style={{marginTop:14,padding:10,background:"var(--bg1)",borderRadius:6,border:"1px solid var(--bg3)"}}>
+            <div style={{fontSize:".75rem",color:"var(--fg2)",wordBreak:"break-word"}}>{status}</div>
+            {progress.total>0&&<div style={{marginTop:8}}>
+              <div style={{height:3,background:"var(--bg3)",borderRadius:2,overflow:"hidden"}}><div style={{height:3,background:"var(--ac)",borderRadius:2,width:`${(progress.current/progress.total)*100}%`,transition:"width 0.3s"}}/></div>
+              <div style={{fontSize:".65rem",color:"var(--fg4)",marginTop:4,fontFamily:"var(--mono)"}}>{progress.current}/{progress.total}</div>
+            </div>}</div>}
+        </aside>
+
+        {/* RIGHT PANEL */}
+        <main style={{flex:1,padding:"1.2rem 1.5rem",overflowY:"auto"}}>
+          {st&&<div style={{display:"flex",gap:10,marginBottom:20,flexWrap:"wrap"}}>
+            <SC label="Total" value={st.t} color="var(--fg)"/><SC label="Has Email" value={st.em} color="var(--ac)"/>
+            <SC label="Verified" value={st.v} color="#00cc66"/><SC label="Avg Score" value={st.avg} color="var(--warn)"/>
+            <SC label="Grade A" value={st.a} color="var(--ac)"/><SC label="Grade B" value={st.b} color="#88ff00"/>
           </div>}
-        </>}
-        {phase==="enriching"&&<button className="btn btn-danger" style={{width:"100%",marginTop:6}} onClick={()=>{abortRef.current=true}}>STOP</button>}
-        {activeLeads.length>0&&activeLeads[0]?._scoreData&&<button className="btn btn-ghost" style={{width:"100%",marginTop:10}} onClick={()=>exportCSV(activeLeads)}>EXPORT CSV — {activeLeads.length} leads</button>}
-        {status&&<div style={{marginTop:14,padding:10,background:"var(--bg-1)",borderRadius:6,border:"1px solid var(--bg-3)"}}><div style={{fontSize:"0.75rem",color:"var(--fg-2)",wordBreak:"break-word"}}>{status}</div>{progress.total>0&&<div style={{marginTop:8}}><div style={{height:3,background:"var(--bg-3)",borderRadius:2,overflow:"hidden"}}><div style={{height:3,background:"var(--accent)",borderRadius:2,width:`${(progress.current/progress.total)*100}%`,transition:"width 0.3s"}}/></div><div style={{fontSize:"0.65rem",color:"var(--fg-4)",marginTop:4,fontFamily:"var(--mono)"}}>{progress.current}/{progress.total} • ~{Math.ceil((progress.total-progress.current)/10*1.5)}s left</div></div>}</div>}
-      </aside>
-      <main style={{flex:1,padding:"1.2rem 1.5rem",overflowY:"auto"}}>
-        {stats&&<div style={{display:"flex",gap:10,marginBottom:20,flexWrap:"wrap"}}><SC label="Total" value={stats.total} color="var(--fg)"/><SC label="Has Email" value={stats.em} color="var(--accent)"/><SC label="Verified" value={stats.ver} color="#00cc66"/><SC label="Avg Score" value={stats.avg} color="var(--warn)"/><SC label="Grade A" value={stats.a} color="var(--accent)"/><SC label="Grade B" value={stats.b} color="#88ff00"/></div>}
-        {activeLeads.length>0?<LT leads={activeLeads}/>:<div style={{display:"flex",alignItems:"center",justifyContent:"center",height:"70%",flexDirection:"column",opacity:.5}}><div style={{fontSize:56,marginBottom:16,filter:"grayscale(1)"}}>⚡</div><div style={{fontSize:"0.95rem",color:"var(--fg-4)",textAlign:"center",maxWidth:400,lineHeight:1.6}}>{mode==="search"?<>Set filters → <strong style={{color:"var(--fg-2)"}}>Search</strong> → <strong style={{color:"var(--accent)"}}>Enrich</strong> → Export CSV</>:<>Upload unenriched CSV → <strong style={{color:"var(--accent)"}}>Enrich</strong> → get scored leads with emails</>}</div><div style={{fontSize:"0.7rem",color:"var(--fg-4)",marginTop:10}}>1 Apollo credit per enriched lead</div></div>}
-      </main>
-    </div>
-  </div>)}
+          {activeLeads.length>0?<LT leads={activeLeads}/>:
+            <div style={{display:"flex",alignItems:"center",justifyContent:"center",height:"70%",flexDirection:"column",opacity:.5}}>
+              <div style={{fontSize:56,marginBottom:16,filter:"grayscale(1)"}}>⚡</div>
+              <div style={{fontSize:".95rem",color:"var(--fg4)",textAlign:"center",maxWidth:400,lineHeight:1.6}}>
+                {mode==="search"?<>Set filters → <strong style={{color:"var(--fg2)"}}>Search</strong> → <strong style={{color:"var(--ac)"}}>Enrich</strong> → Export</>
+                :<>Upload unenriched CSV → <strong style={{color:"var(--ac)"}}>Enrich</strong> → get scored leads with emails</>}
+              </div>
+            </div>}
+        </main>
+      </div>
+    </div>)}
+
 ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
 </script>
 </body>

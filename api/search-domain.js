@@ -5,11 +5,19 @@ export default async function handler(req, res) {
   if (req.method === "OPTIONS") return res.status(200).end();
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
-  const { apiKey, ...body } = req.body;
+  const { apiKey, domain, titles, page } = req.body;
   if (!apiKey) return res.status(400).json({ error: "Missing API key" });
+  if (!domain) return res.status(400).json({ error: "Missing domain" });
 
   try {
-    // Apollo deprecated /v1/mixed_people/search — use /v1/mixed_people/api_search
+    const body = {
+      q_organization_domains_list: [domain],
+      page: page || 1,
+      per_page: 100,
+    };
+    // If titles provided, filter by them
+    if (titles && titles.length) body.person_titles = titles;
+
     const response = await fetch("https://api.apollo.io/v1/mixed_people/api_search", {
       method: "POST",
       headers: { "Content-Type": "application/json", "x-api-key": apiKey },
